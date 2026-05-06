@@ -3157,40 +3157,37 @@ function updateBannerSettings() {
     
     console.log('🎨 Banner renkleri güncelleniyor:', {bgColor, textColor});
     
-    // SABİT METİN SİSTEMİ - Artık text input'ları yok
-    // Sadece renkleri kaydet
-    
     // Text input'ları da güncelle
     document.getElementById('bannerBgColorText').value = bgColor;
     document.getElementById('bannerTextColorText').value = textColor;
     
-    // Sadece renkleri localStorage'a kaydet
-    localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
-    localStorage.setItem(getAdminKey('banner_text_color'), textColor);
-    
-    // ESKİ TEXT VERİLERİNİ TEMİZLE
-    localStorage.removeItem(getAdminKey('banner_texts'));
-    for (var i = 1; i <= 5; i++) {
-        localStorage.removeItem(getAdminKey('banner_text_' + i));
-    }
-    
-    // Admin sayfasındaki banner'ı güncelle (sabit metinlerle)
+    // Admin sayfasındaki banner'ı güncelle
     updateAdminBannerDisplay(bgColor, textColor);
     
-    // Anlık güncelleme tetikle (ürün sayfasında değişiklik görmek için)
-    setTimeout(function() {
-        // Storage event'i tetikle
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: getAdminKey('banner_bg_color'),
-            newValue: localStorage.getItem(getAdminKey('banner_bg_color'))
-        }));
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: getAdminKey('banner_text_color'),
-            newValue: localStorage.getItem(getAdminKey('banner_text_color'))
-        }));
-    }, 200);
+    // 🔥 Firebase'e kaydet (tüm cihazlarda görünsün)
+    onFirebaseReady(function(db) {
+        try {
+            var bannerData = {
+                bgColor: bgColor,
+                textColor: textColor,
+                timestamp: Date.now()
+            };
+            
+            // Banner renklerini Firebase'e kaydet
+            db.ref('www_emenkargon_online/bannerColors').set(bannerData).then(function() {
+                console.log('🔥 Firebase\'e kaydedildi - Banner renkleri tüm cihazlarda görünecek:', bannerData);
+                alert('✅ Kayan yazı renkleri kaydedildi! Tüm cihazlarda görünecek.');
+            }).catch(function(error) {
+                console.error('❌ Firebase kayıt hatası:', error);
+                alert('❌ Kayıt hatası: ' + error.message);
+            });
+        } catch(e) {
+            console.error('❌ Firebase işlem hatası:', e);
+            alert('❌ Hata: ' + e.message);
+        }
+    });
     
-    console.log('✅ Banner renk ayarları kaydedildi (sabit metinlerle):', {bgColor, textColor});
+    console.log('✅ Banner renk ayarları kaydedildi:', {bgColor, textColor});
 }
 
 function updateAdminBannerDisplay(bgColor, textColor) {

@@ -236,6 +236,24 @@ function getAdminKey(key) {
     
     document.write('</div>');
     document.write('</div>');
+    
+    // 🔥 Firebase'den renkleri dinle
+    setTimeout(function() {
+        onFirebaseReady(function(db) {
+            db.ref('www_emenkargon_online/bannerColors').on('value', function(snapshot) {
+                var data = snapshot.val();
+                if (data) {
+                    var strip = document.getElementById('bannerStrip');
+                    var content = document.getElementById('bannerContent');
+                    if (strip) strip.style.background = data.bgColor || '#000000';
+                    if (content) {
+                        var spans = content.querySelectorAll('span');
+                        spans.forEach(function(span) { span.style.color = data.textColor || '#ffffff'; });
+                    }
+                }
+            });
+        });
+    }, 1000);
 })();
 </script>
 <style>

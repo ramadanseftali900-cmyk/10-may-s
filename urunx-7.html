@@ -243,19 +243,36 @@ function getAdminKey(key) {
     function updateBannerStrip() {
         var bannerDiv = document.querySelector('div[style*="animation:kayanYazi"]');
         if (bannerDiv && bannerDiv.parentElement) {
-            var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-            var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
-            
-            // Arkaplan rengini güncelle
-            bannerDiv.parentElement.style.background = bgColor;
-            
-            // Yazı renklerini güncelle
-            var spans = bannerDiv.querySelectorAll('span');
-            for (var i = 0; i < spans.length; i++) {
-                spans[i].style.color = textColor;
-            }
+            // 🔥 Firebase'den renkleri al
+            onFirebaseReady(function(db) {
+                db.ref('www_emenkargon_online/bannerColors').once('value').then(function(snapshot) {
+                    var data = snapshot.val();
+                    var bgColor = '#000000';
+                    var textColor = '#ffffff';
+                    if (data) {
+                        bgColor = data.bgColor || '#000000';
+                        textColor = data.textColor || '#ffffff';
+                    }
+                    
+                    // Arkaplan rengini güncelle
+                    bannerDiv.parentElement.style.background = bgColor;
+                    
+                    // Yazı renklerini güncelle
+                    var spans = bannerDiv.querySelectorAll('span');
+                    for (var i = 0; i < spans.length; i++) {
+                        spans[i].style.color = textColor;
+                    }
+                });
+            });
         }
     }
+    
+    // Firebase dinleyicisi başlat
+    onFirebaseReady(function(db) {
+        db.ref('www_emenkargon_online/bannerColors').on('value', function() {
+            updateBannerStrip();
+        });
+    });
     
     // localStorage değişikliklerini dinle
     window.addEventListener('storage', function(e) {

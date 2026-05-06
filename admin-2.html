@@ -3126,31 +3126,32 @@ function updateBannerSettings() {
         texts = ['🚚 AYNI GÜN KARGO', '💳 KAPIDA ÖDEME', '📦 HIZLI TESLİMAT', '🔒 GÜVENLİ ALIŞVERİŞ', '⭐ %100 MÜŞTERİ MEMNUNİYETİ'];
     }
     
-    // localStorage'a kaydet
-    localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
-    localStorage.setItem(getAdminKey('banner_text_color'), textColor);
-    localStorage.setItem(getAdminKey('banner_texts'), texts.join('\n'));
-    
-    // Ayrı ayrı da kaydet
-    for (var i = 0; i < texts.length && i < 5; i++) {
-        localStorage.setItem(getAdminKey('banner_text_' + (i + 1)), texts[i]);
-    }
-    
     // Admin sayfasındaki banner'ı anında güncelle
     updateAdminBannerDisplay(bgColor, textColor, texts);
     
-    // Anlık güncelleme tetikle (ürün sayfasında değişiklik görmek için)
-    setTimeout(function() {
-        // Storage event'i tetikle
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: getAdminKey('banner_bg_color'),
-            newValue: localStorage.getItem(getAdminKey('banner_bg_color'))
-        }));
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: getAdminKey('banner_text_color'),
-            newValue: localStorage.getItem(getAdminKey('banner_text_color'))
-        }));
-    }, 200);
+    // 🔥 Firebase'e kaydet (tüm cihazlarda görünsün)
+    onFirebaseReady(function(db) {
+        try {
+            var bannerData = {
+                bgColor: bgColor,
+                textColor: textColor,
+                texts: texts,
+                timestamp: Date.now()
+            };
+            
+            // Banner renklerini Firebase'e kaydet
+            db.ref('www_emenkargon_online/bannerColors').set(bannerData).then(function() {
+                console.log('🔥 Firebase\'e kaydedildi - Banner renkleri tüm cihazlarda görünecek:', bannerData);
+                alert('✅ Kayan yazı renkleri kaydedildi! Tüm cihazlarda görünecek.');
+            }).catch(function(error) {
+                console.error('❌ Firebase kayıt hatası:', error);
+                alert('❌ Kayıt hatası: ' + error.message);
+            });
+        } catch(e) {
+            console.error('❌ Firebase işlem hatası:', e);
+            alert('❌ Hata: ' + e.message);
+        }
+    });
     
     console.log('✅ Banner ayarları kaydedildi:', {bgColor, textColor, texts});
 }

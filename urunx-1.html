@@ -403,20 +403,24 @@ setTimeout(function() {
 // =============================================
 
 function loadBannerSettings() {
-    // Admin panelinden sadece renkleri yükle
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
-    
-    // ESKİ TEXT VERİLERİNİ TEMİZLE
-    localStorage.removeItem(getAdminKey('banner_texts'));
-    for (var i = 1; i <= 5; i++) {
-        localStorage.removeItem(getAdminKey('banner_text_' + i));
-    }
-    
-    // Banner şeridini güncelle (sabit metinlerle)
-    updateBannerDisplay(bgColor, textColor);
+    // 🔥 Firebase'den banner renklerini yükle
+    onFirebaseReady(function(db) {
+        db.ref('www_emenkargon_online/bannerColors').on('value', function(snapshot) {
+            var data = snapshot.val();
+            var bgColor = '#000000';
+            var textColor = '#ffffff';
+            
+            if (data) {
+                bgColor = data.bgColor || '#000000';
+                textColor = data.textColor || '#ffffff';
+            }
+            
+            // Banner şeridini güncelle
+            updateBannerDisplay(bgColor, textColor);
+        });
+    });
 }
-}
+
 
 function updateBannerDisplay(bgColor, textColor) {
     var bannerStrip = document.getElementById('bannerStrip');

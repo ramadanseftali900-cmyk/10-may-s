@@ -3767,18 +3767,19 @@ function updateBannerSettings() {
         saveBannerText(i);
     }
     
-    // Anlık güncelleme tetikle (ürün sayfasında değişiklik görmek için)
-    setTimeout(function() {
-        // Storage event'i tetikle
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: getAdminKey('banner_bg_color'),
-            newValue: localStorage.getItem(getAdminKey('banner_bg_color'))
-        }));
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: getAdminKey('banner_text_color'),
-            newValue: localStorage.getItem(getAdminKey('banner_text_color'))
-        }));
-    }, 200);
+    // 🔥 Firebase'e kaydet
+    var bgColor = document.getElementById('bannerBgColor').value;
+    var textColor = document.getElementById('bannerTextColor').value;
+    var texts = [];
+    for (var i = 1; i <= 5; i++) {
+        var input = document.getElementById('bannerText' + i);
+        if (input && input.value.trim()) texts.push(input.value.trim());
+    }
+    onFirebaseReady(function(db) {
+        db.ref('www_emenkargon_online/bannerColors').set({
+            bgColor: bgColor, textColor: textColor, texts: texts, timestamp: Date.now()
+        });
+    });
 }
 
 function updateAdminBannerDisplay(bgColor, textColor, texts) {

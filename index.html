@@ -366,13 +366,30 @@ setTimeout(function() {
 // =============================================
 
 function loadBannerSettings() {
-    // Admin panelinden ayarları yükle
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
-    var texts = localStorage.getItem(getAdminKey('banner_texts')) || '🚚 AYNI GÜN KARGO\n💳 KAPIDA ÖDEME\n📦 HIZLI TESLİMAT\n🔒 GÜVENLİ ALIŞVERİŞ\n⭐ %100 MÜŞTERİ MEMNUNİYETİ\n✅ ÜCRETSİZ KARGO';
-    
-    // Banner şeridini güncelle
-    updateBannerDisplay(bgColor, textColor, texts);
+    // 🔥 Firebase'den banner renklerini yükle (tüm cihazlarda aynı)
+    onFirebaseReady(function(db) {
+        db.ref('www_emenkargon_online/bannerColors').on('value', function(snapshot) {
+            var data = snapshot.val();
+            var bgColor = '#000000';
+            var textColor = '#ffffff';
+            var texts = '🚚 AYNI GÜN KARGO\n💳 KAPIDA ÖDEME\n📦 HIZLI TESLİMAT\n🔒 GÜVENLİ ALIŞVERİŞ\n⭐ %100 MÜŞTERİ MEMNUNİYETİ\n✅ ÜCRETSİZ KARGO';
+            
+            if (data) {
+                bgColor = data.bgColor || '#000000';
+                textColor = data.textColor || '#ffffff';
+                if (data.texts && Array.isArray(data.texts)) {
+                    texts = data.texts.join('\n');
+                }
+                console.log('🔥 Firebase\'den yüklendi - Banner renkleri (Index):', data);
+            } else {
+                console.log('⚠️ Firebase\'de banner rengi yok, varsayılan kullanılıyor');
+            }
+            
+            // Banner şeridini güncelle
+            updateBannerDisplay(bgColor, textColor, texts);
+        });
+    });
+}
 }
 
 function updateBannerDisplay(bgColor, textColor, texts) {
