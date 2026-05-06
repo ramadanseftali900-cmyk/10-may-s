@@ -3347,44 +3347,78 @@ function isValidColor(color) {
 }
 
 function loadBannerSettings() {
-    // Varsayılan değerleri localStorage'dan yükle veya ata
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
-    
-    // ESKİ TEXT VERİLERİNİ TEMİZLE
-    localStorage.removeItem(getAdminKey('banner_texts'));
-    for (var i = 1; i <= 5; i++) {
-        localStorage.removeItem(getAdminKey('banner_text_' + i));
-    }
-    
-    // Form alanlarını güncelle
-    var bgColorInput = document.getElementById('bannerBgColor');
-    var textColorInput = document.getElementById('bannerTextColor');
-    var bgColorTextInput = document.getElementById('bannerBgColorText');
-    var textColorTextInput = document.getElementById('bannerTextColorText');
-    
-    if (bgColorInput) bgColorInput.value = bgColor;
-    if (textColorInput) textColorInput.value = textColor;
-    if (bgColorTextInput) bgColorTextInput.value = bgColor;
-    if (textColorTextInput) textColorTextInput.value = textColor;
-    
-    console.log('✅ Banner renk ayarları yüklendi (sabit metinlerle)');
+    // 🔥 Önce Firebase'den yükle, sonra localStorage'a kaydet
+    onFirebaseReady(function(db) {
+        db.ref('www_emenkargon_online/admin1/bannerColors').once('value').then(function(snapshot) {
+            var data = snapshot.val();
+            var bgColor = '#000000';
+            var textColor = '#ffffff';
+            
+            if (data) {
+                bgColor = data.bgColor || '#000000';
+                textColor = data.textColor || '#ffffff';
+                
+                // Firebase'den gelen renkleri localStorage'a kaydet
+                localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
+                localStorage.setItem(getAdminKey('banner_text_color'), textColor);
+                
+                console.log('🔥 Firebase\'den banner renkleri yüklendi:', {bgColor, textColor});
+            } else {
+                // Firebase'de veri yoksa localStorage'dan al
+                bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
+                textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
+                
+                console.log('📦 localStorage\'dan banner renkleri yüklendi:', {bgColor, textColor});
+            }
+            
+            // ESKİ TEXT VERİLERİNİ TEMİZLE
+            localStorage.removeItem(getAdminKey('banner_texts'));
+            for (var i = 1; i <= 5; i++) {
+                localStorage.removeItem(getAdminKey('banner_text_' + i));
+            }
+            
+            // Form alanlarını güncelle
+            var bgColorInput = document.getElementById('bannerBgColor');
+            var textColorInput = document.getElementById('bannerTextColor');
+            var bgColorTextInput = document.getElementById('bannerBgColorText');
+            var textColorTextInput = document.getElementById('bannerTextColorText');
+            
+            if (bgColorInput) bgColorInput.value = bgColor;
+            if (textColorInput) textColorInput.value = textColor;
+            if (bgColorTextInput) bgColorTextInput.value = bgColor;
+            if (textColorTextInput) textColorTextInput.value = textColor;
+            
+            // Admin paneldeki banner'ı güncelle
+            updateAdminBannerDisplay(bgColor, textColor);
+            
+            console.log('✅ Banner renk ayarları yüklendi (sabit metinlerle)');
+        }).catch(function(error) {
+            console.error('❌ Firebase yükleme hatası:', error);
+            
+            // Hata olursa localStorage'dan yükle
+            var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
+            var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
+            
+            var bgColorInput = document.getElementById('bannerBgColor');
+            var textColorInput = document.getElementById('bannerTextColor');
+            var bgColorTextInput = document.getElementById('bannerBgColorText');
+            var textColorTextInput = document.getElementById('bannerTextColorText');
+            
+            if (bgColorInput) bgColorInput.value = bgColor;
+            if (textColorInput) textColorInput.value = textColor;
+            if (bgColorTextInput) bgColorTextInput.value = bgColor;
+            if (textColorTextInput) textColorTextInput.value = textColor;
+            
+            updateAdminBannerDisplay(bgColor, textColor);
+        });
+    });
 }
 
 // Sayfa yüklenince banner ayarlarını yükle
 document.addEventListener('DOMContentLoaded', function() {
-    var bgColor = localStorage.getItem('emenkargon_online_admin1_banner_bg_color') || '#000000';
-    var textColor = localStorage.getItem('emenkargon_online_admin1_banner_text_color') || '#ffffff';
-    
-    document.getElementById('bannerBgColor').value = bgColor;
-    document.getElementById('bannerTextColor').value = textColor;
-    document.getElementById('bannerBgColorText').value = bgColor;
-    document.getElementById('bannerTextColorText').value = textColor;
-    
-    document.getElementById('bannerStrip').style.background = bgColor;
-    var spans = document.querySelectorAll('#bannerContent span');
-    for(var i=0; i<spans.length; i++){
-        spans[i].style.color = textColor;
-    }
+    // loadBannerSettings fonksiyonu Firebase'den yükleyecek
+    setTimeout(function() {
+        loadBannerSettings();
+    }, 500);
 });
 </script>

@@ -3205,38 +3205,79 @@ function updateBannerFromInputs() {
 }
 
 function loadBannerSettings() {
-    // Varsayılan değerleri localStorage'dan yükle veya ata
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
-    var texts = localStorage.getItem(getAdminKey('banner_texts')) || '🚚 AYNI GÜN KARGO\n💳 KAPIDA ÖDEME\n📦 HIZLI TESLİMAT\n🔒 GÜVENLİ ALIŞVERİŞ\n⭐ %100 MÜŞTERİ MEMNUNİYETİ\n✅ ÜCRETSİZ KARGO';
-    
-    // Form alanlarını güncelle
-    var bgColorInput = document.getElementById('bannerBgColor');
-    var textColorInput = document.getElementById('bannerTextColor');
-    var bgColorTextInput = document.getElementById('bannerBgColorText');
-    var textColorTextInput = document.getElementById('bannerTextColorText');
-    
-    if (bgColorInput) bgColorInput.value = bgColor;
-    if (textColorInput) textColorInput.value = textColor;
-    if (bgColorTextInput) bgColorTextInput.value = bgColor;
-    if (textColorTextInput) textColorTextInput.value = textColor;
-    
-    // Ayrı input'ları yükle
-    var defaultTexts = ['🚚 AYNI GÜN KARGO', '💳 KAPIDA ÖDEME', '📦 HIZLI TESLİMAT', '🔒 GÜVENLİ ALIŞVERİŞ', '⭐ %100 MÜŞTERİ MEMNUNİYETİ'];
-    
-    for (var i = 1; i <= 5; i++) {
-        var input = document.getElementById('bannerText' + i);
-        if (input) {
-            var savedText = localStorage.getItem(getAdminKey('banner_text_' + i));
-            if (savedText) {
-                input.value = savedText;
-            } else if (defaultTexts[i-1]) {
-                input.value = defaultTexts[i-1];
+    // 🔥 Önce Firebase'den yükle, sonra localStorage'a kaydet
+    onFirebaseReady(function(db) {
+        db.ref('www_emenkargon_online/admin2/bannerColors').once('value').then(function(snapshot) {
+            var data = snapshot.val();
+            var bgColor = '#000000';
+            var textColor = '#ffffff';
+            var texts = '🚚 AYNI GÜN KARGO\n💳 KAPIDA ÖDEME\n📦 HIZLI TESLİMAT\n🔒 GÜVENLİ ALIŞVERİŞ\n⭐ %100 MÜŞTERİ MEMNUNİYETİ\n✅ ÜCRETSİZ KARGO';
+            
+            if (data) {
+                bgColor = data.bgColor || '#000000';
+                textColor = data.textColor || '#ffffff';
+                texts = data.texts || texts;
+                
+                // Firebase'den gelen renkleri localStorage'a kaydet
+                localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
+                localStorage.setItem(getAdminKey('banner_text_color'), textColor);
+                localStorage.setItem(getAdminKey('banner_texts'), texts);
+                
+                console.log('🔥 Firebase\'den banner renkleri yüklendi:', {bgColor, textColor});
+            } else {
+                // Firebase'de veri yoksa localStorage'dan al
+                bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || bgColor;
+                textColor = localStorage.getItem(getAdminKey('banner_text_color')) || textColor;
+                texts = localStorage.getItem(getAdminKey('banner_texts')) || texts;
+                
+                console.log('📦 localStorage\'dan banner renkleri yüklendi:', {bgColor, textColor});
             }
-        }
-    }
-    
-    console.log('✅ Banner ayarları yüklendi');
+            
+            // Form alanlarını güncelle
+            var bgColorInput = document.getElementById('bannerBgColor');
+            var textColorInput = document.getElementById('bannerTextColor');
+            var bgColorTextInput = document.getElementById('bannerBgColorText');
+            var textColorTextInput = document.getElementById('bannerTextColorText');
+            
+            if (bgColorInput) bgColorInput.value = bgColor;
+            if (textColorInput) textColorInput.value = textColor;
+            if (bgColorTextInput) bgColorTextInput.value = bgColor;
+            if (textColorTextInput) textColorTextInput.value = textColor;
+            
+            // Ayrı input'ları yükle
+            var defaultTexts = ['🚚 AYNI GÜN KARGO', '💳 KAPIDA ÖDEME', '📦 HIZLI TESLİMAT', '🔒 GÜVENLİ ALIŞVERİŞ', '⭐ %100 MÜŞTERİ MEMNUNİYETİ'];
+            
+            for (var i = 1; i <= 5; i++) {
+                var input = document.getElementById('bannerText' + i);
+                if (input) {
+                    var savedText = localStorage.getItem(getAdminKey('banner_text_' + i));
+                    if (savedText) {
+                        input.value = savedText;
+                    } else if (defaultTexts[i-1]) {
+                        input.value = defaultTexts[i-1];
+                    }
+                }
+            }
+            
+            // Admin paneldeki banner'ı güncelle
+            updateAdminBannerDisplay(bgColor, textColor);
+            
+            console.log('✅ Banner ayarları yüklendi');
+        }).catch(function(error) {
+            console.error('❌ Firebase yükleme hatası:', error);
+            
+            // Hata olursa localStorage'dan yükle
+            var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
+            var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
+            
+            var bgColorInput = document.getElementById('bannerBgColor');
+            var textColorInput = document.getElementById('bannerTextColor');
+            if (bgColorInput) bgColorInput.value = bgColor;
+            if (textColorInput) textColorInput.value = textColor;
+            
+            updateAdminBannerDisplay(bgColor, textColor);
+        });
+    });
 }
 
 function updateBannerFromColor(type) {
