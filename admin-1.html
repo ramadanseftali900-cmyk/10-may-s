@@ -3364,17 +3364,24 @@ function loadAdminBannerSettings() {
 }
 
 function updateBannerFromColor(type) {
+    console.log('🎨 updateBannerFromColor çağrıldı:', type);
+    
     if (type === 'bg') {
         var colorValue = document.getElementById('bannerBgColor').value;
         document.getElementById('bannerBgColorText').value = colorValue;
+        console.log('🎨 Arkaplan rengi değişti:', colorValue);
     } else if (type === 'text') {
         var colorValue = document.getElementById('bannerTextColor').value;
         document.getElementById('bannerTextColorText').value = colorValue;
+        console.log('🎨 Yazı rengi değişti:', colorValue);
     }
     
     // ANLIK GÜNCELLEME - Banner'ı hemen güncelle
     var bgColor = document.getElementById('bannerBgColor').value;
     var textColor = document.getElementById('bannerTextColor').value;
+    
+    console.log('🎨 Güncel renkler - BG:', bgColor, 'Text:', textColor);
+    
     updateAdminBannerDisplay(bgColor, textColor);
     
     // Renk seçici kullanıldığında otomatik kaydet
