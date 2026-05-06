@@ -102,6 +102,72 @@ function getAdminKey(key) {
 
 // SITE_ID'yi global olarak tanımla (Firebase için)
 var SITE_ID = 'www_emenkargon_online';
+
+// BANNER FONKSİYONLARI - GLOBAL SCOPE'DA TANIMLA
+function updateBannerFromColor(type) {
+    if (type === 'bg') {
+        var colorValue = document.getElementById('bannerBgColor').value;
+        document.getElementById('bannerBgColorText').value = colorValue;
+    } else if (type === 'text') {
+        var colorValue = document.getElementById('bannerTextColor').value;
+        document.getElementById('bannerTextColorText').value = colorValue;
+    }
+    
+    var bannerStrip = document.getElementById('bannerStrip');
+    if (bannerStrip && type === 'bg') {
+        bannerStrip.style.background = document.getElementById('bannerBgColor').value;
+    }
+    
+    var spans = document.querySelectorAll('#bannerContent span');
+    if (spans.length > 0 && type === 'text') {
+        spans.forEach(function(span) {
+            span.style.color = document.getElementById('bannerTextColor').value;
+        });
+    }
+    
+    var bgColor = document.getElementById('bannerBgColor').value;
+    var textColor = document.getElementById('bannerTextColor').value;
+    localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
+    localStorage.setItem(getAdminKey('banner_text_color'), textColor);
+    
+    if (typeof firebase !== 'undefined' && firebase.database) {
+        var db = firebase.database();
+        var bannerData = {
+            bgColor: bgColor,
+            textColor: textColor,
+            timestamp: Date.now()
+        };
+        db.ref('www_emenkargon_online/admin10/bannerColors').set(bannerData).then(function() {
+            console.log('🔥 Firebase\'e kaydedildi - Banner renkleri (admin-10):', bannerData);
+        }).catch(function(error) {
+            console.error('❌ Firebase kayıt hatası:', error);
+        });
+    }
+}
+
+function updateBannerFromText(type) {
+    if (type === 'bg') {
+        var textValue = document.getElementById('bannerBgColorText').value.trim();
+        if (textValue && !textValue.startsWith('#')) {
+            textValue = '#' + textValue;
+            document.getElementById('bannerBgColorText').value = textValue;
+        }
+        if (/^#[0-9A-Fa-f]{6}$/.test(textValue)) {
+            document.getElementById('bannerBgColor').value = textValue;
+            updateBannerFromColor('bg');
+        }
+    } else if (type === 'text') {
+        var textValue = document.getElementById('bannerTextColorText').value.trim();
+        if (textValue && !textValue.startsWith('#')) {
+            textValue = '#' + textValue;
+            document.getElementById('bannerTextColorText').value = textValue;
+        }
+        if (/^#[0-9A-Fa-f]{6}$/.test(textValue)) {
+            document.getElementById('bannerTextColor').value = textValue;
+            updateBannerFromColor('text');
+        }
+    }
+}
 </script>
 
 <!-- ÜST ÇEKMECE -->

@@ -200,7 +200,7 @@ function getAdminKey(key) {
 
 <!-- KAYAN YAZI ŞERİDİ -->
 <script>
-// Banner renklerini ve yazıları HEMEN al ve HTML'i oluştur
+// Banner renklerini HEMEN al ve HTML'i oluştur
 (function() {
     function getAdminKey(key) { 
         var siteId = 'www_emenkargon_online';
@@ -216,53 +216,49 @@ function getAdminKey(key) {
     if (!bgColor) bgColor = '#000000';
     if (!textColor) textColor = '#ffffff';
     
-    // Admin panelinden girilen yazıları al
-    var texts = [];
-    for (var i = 1; i <= 5; i++) {
-        var savedText = localStorage.getItem(getAdminKey('banner_text_' + i));
-        if (savedText && savedText.trim()) {
-            texts.push(savedText.trim());
-        }
-    }
-    
-    // Eğer hiç yazı yoksa varsayılanları kullan
-    if (texts.length === 0) {
-        texts = ['🚚 AYNI GÜN KARGO', '💳 KAPIDA ÖDEME', '📦 HIZLI TESLİMAT', '🔒 GÜVENLİ ALIŞVERİŞ', '⭐ %100 MÜŞTERİ MEMNUNİYETİ', '✅ ÜCRETSİZ KARGO'];
-    }
-    
+    // SABİT METİNLER - HIZLI YÜKLEME
     document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;visibility:' + visibility + ';">');
     document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 20s linear infinite;">');
-    
-    // Yazıları 2 kez tekrarla ki kesintisiz dönsün
-    for (var j = 0; j < 2; j++) {
-        for (var i = 0; i < texts.length; i++) {
-            document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">' + texts[i] + '</span>');
-        }
-    }
-    
+    document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">🚚 AYNI GÜN KARGO</span>');
+    document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">💳 KAPIDA ÖDEME</span>');
+    document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">📦 HIZLI TESLİMAT</span>');
+    document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">🔒 GÜVENLİ ALIŞVERİŞ</span>');
+    document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">⭐ %100 MÜŞTERİ MEMNUNİYETİ</span>');
+    document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">✅ ÜCRETSİZ KARGO</span>');
+    document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">🚚 AYNI GÜN KARGO</span>');
+    document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">💳 KAPIDA ÖDEME</span>');
+    document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">📦 HIZLI TESLİMAT</span>');
+    document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">🔒 GÜVENLİ ALIŞVERİŞ</span>');
+    document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">⭐ %100 MÜŞTERİ MEMNUNİYETİ</span>');
+    document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">✅ ÜCRETSİZ KARGO</span>');
     document.write('</div>');
     document.write('</div>');
     
-    // 🔥 Firebase'den renkleri dinle (Admin-2'den)
-    setTimeout(function() {
-        onFirebaseReady(function(db) {
-            db.ref('www_emenkargon_online/admin2/bannerColors').on('value', function(snapshot) {
-                var data = snapshot.val();
-                if (data) {
-                    var strip = document.getElementById('bannerStrip');
-                    var content = document.getElementById('bannerContent');
-                    if (strip) {
-                        strip.style.background = data.bgColor || '#000000';
-                        strip.style.visibility = 'visible'; // 🔥 Şeridi görünür yap
-                    }
-                    if (content) {
-                        var spans = content.querySelectorAll('span');
-                        spans.forEach(function(span) { span.style.color = data.textColor || '#ffffff'; });
-                    }
+    // 🔥 Firebase'den renkleri dinle (Admin-2'den) - GERÇEK ZAMANLI SENKRONIZASYON
+    onFirebaseReady(function(db) {
+        console.log('🔥 Firebase hazır, banner renkleri yükleniyor (urunx-2)...');
+        
+        db.ref('www_emenkargon_online/admin2/bannerColors').on('value', function(snapshot) {
+            var data = snapshot.val();
+            if (data) {
+                var strip = document.getElementById('bannerStrip');
+                var content = document.getElementById('bannerContent');
+                if (strip) {
+                    strip.style.background = data.bgColor || '#000000';
+                    strip.style.visibility = 'visible'; // 🔥 Şeridi görünür yap
+                    console.log('🔥 Firebase\'den yüklendi (urunx-2) - BG:', data.bgColor);
                 }
-            });
+                if (content) {
+                    var spans = content.querySelectorAll('span');
+                    spans.forEach(function(span) { span.style.color = data.textColor || '#ffffff'; });
+                }
+                
+                // localStorage'a kaydet
+                localStorage.setItem(getAdminKey('banner_bg_color'), data.bgColor);
+                localStorage.setItem(getAdminKey('banner_text_color'), data.textColor);
+            }
         });
-    }, 1000);
+    });
 })();
 </script>
 <style>

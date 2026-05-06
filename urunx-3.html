@@ -245,54 +245,50 @@ function getAdminKey(key) {
         return siteId + '_admin3_' + key; 
     }
     
-    // Son bilinen değerler
-    var lastBgColor = '';
-    var lastTextColor = '';
-    
-    // Kayan yazı şeridini güncelle
-    function updateBannerStrip() {
-        var bannerStrip = document.getElementById('bannerStrip');
-        var bannerContent = document.getElementById('bannerContent');
-        if (bannerStrip && bannerContent) {
-            // 🔥 Firebase'den renkleri al (Admin-3'ten)
-            onFirebaseReady(function(db) {
-                db.ref('www_emenkargon_online/admin3/bannerColors').once('value').then(function(snapshot) {
-                    var data = snapshot.val();
-                    var bgColor = '#000000';
-                    var textColor = '#ffffff';
-                    if (data) {
-                        bgColor = data.bgColor || '#000000';
-                        textColor = data.textColor || '#ffffff';
-                    }
-                    
-                    // Arkaplan rengini güncelle
-                    bannerStrip.style.background = bgColor;
-                    
-                    // 🔥 Şeridi görünür yap (Firebase'den renk geldi)
-                    bannerStrip.style.visibility = 'visible';
-                    
-                    // Yazı renklerini güncelle
-                    var spans = bannerContent.querySelectorAll('span');
-                    for (var i = 0; i < spans.length; i++) {
-                        spans[i].style.color = textColor;
-                    }
-                    
-                    console.log('🔄 Banner güncellendi:', {bgColor, textColor});
-                });
-            });
-        }
-    }
-    
-    // Firebase dinleyicisi başlat (Admin-3'ten oku)
+    // 🔥 Firebase'den banner renklerini yükle (Admin-3'ten) - GERÇEK ZAMANLI SENKRONIZASYON
     onFirebaseReady(function(db) {
-        db.ref('www_emenkargon_online/admin3/bannerColors').on('value', function() {
-            updateBannerStrip();
+        console.log('🔥 Firebase hazır, banner renkleri yükleniyor (urunx-3)...');
+        
+        db.ref('www_emenkargon_online/admin3/bannerColors').on('value', function(snapshot) {
+            var data = snapshot.val();
+            var bgColor = '#000000';
+            var textColor = '#ffffff';
+            
+            if (data) {
+                bgColor = data.bgColor || '#000000';
+                textColor = data.textColor || '#ffffff';
+                console.log('🔥 Firebase\'den yüklendi (urunx-3) - BG:', bgColor, 'Text:', textColor);
+                
+                // localStorage'a kaydet
+                localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
+                localStorage.setItem(getAdminKey('banner_text_color'), textColor);
+            } else {
+                console.log('⚠️ Firebase\'de banner rengi yok (urunx-3)');
+            }
+            
+            // Banner şeridini güncelle
+            var bannerStrip = document.getElementById('bannerStrip');
+            var bannerContent = document.getElementById('bannerContent');
+            
+            if (bannerStrip && bannerContent) {
+                // Arkaplan rengini güncelle
+                bannerStrip.style.background = bgColor;
+                
+                // 🔥 Şeridi görünür yap (Firebase'den renk geldi)
+                bannerStrip.style.visibility = 'visible';
+                
+                // Yazı renklerini güncelle
+                var spans = bannerContent.querySelectorAll('span');
+                spans.forEach(function(span) {
+                    span.style.color = textColor;
+                });
+                
+                console.log('✅ Banner güncellendi (urunx-3)');
+            }
         });
     });
-    
-    // localStorage değişikliklerini sürekli kontrol et (polling)
-    function checkForChanges() {
-        var currentBgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
+})();
+</script>
         var currentTextColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
         
         if (currentBgColor !== lastBgColor || currentTextColor !== lastTextColor) {

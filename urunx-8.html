@@ -245,60 +245,48 @@ function getAdminKey(key) {
         return siteId + '_admin8_' + key; 
     }
     
-    // Kayan yazı şeridini güncelle
-    function updateBannerStrip() {
-        var bannerStrip = document.getElementById('bannerStrip');
-        var bannerContent = document.getElementById('bannerContent');
-        if (bannerStrip && bannerContent) {
-            // 🔥 Firebase'den renkleri al (Admin-8'den)
-            onFirebaseReady(function(db) {
-                db.ref('www_emenkargon_online/admin8/bannerColors').once('value').then(function(snapshot) {
-                    var data = snapshot.val();
-                    var bgColor = '#000000';
-                    var textColor = '#ffffff';
-                    if (data) {
-                        bgColor = data.bgColor || '#000000';
-                        textColor = data.textColor || '#ffffff';
-                    }
-                    
-                    // Arkaplan rengini güncelle
-                    bannerStrip.style.background = bgColor;
-                    
-                    // 🔥 Şeridi görünür yap (Firebase'den renk geldi)
-                    bannerStrip.style.visibility = 'visible';
-                    
-                    // Yazı renklerini güncelle
-                    var spans = bannerContent.querySelectorAll('span');
-                    for (var i = 0; i < spans.length; i++) {
-                        spans[i].style.color = textColor;
-                    }
-                });
-            });
-        }
-    }
-    
-    // Firebase dinleyicisi başlat (Admin-8'den oku)
+    // 🔥 Firebase'den banner renklerini yükle (Admin-8'den) - GERÇEK ZAMANLI SENKRONIZASYON
     onFirebaseReady(function(db) {
-        db.ref('www_emenkargon_online/admin8/bannerColors').on('value', function() {
-            updateBannerStrip();
+        console.log('🔥 Firebase hazır, banner renkleri yükleniyor (urunx-8)...');
+        
+        db.ref('www_emenkargon_online/admin8/bannerColors').on('value', function(snapshot) {
+            var data = snapshot.val();
+            var bgColor = '#000000';
+            var textColor = '#ffffff';
+            
+            if (data) {
+                bgColor = data.bgColor || '#000000';
+                textColor = data.textColor || '#ffffff';
+                console.log('🔥 Firebase\'den yüklendi (urunx-8) - BG:', bgColor, 'Text:', textColor);
+                
+                // localStorage'a kaydet
+                localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
+                localStorage.setItem(getAdminKey('banner_text_color'), textColor);
+            } else {
+                console.log('⚠️ Firebase\'de banner rengi yok (urunx-8)');
+            }
+            
+            // Banner şeridini güncelle
+            var bannerStrip = document.getElementById('bannerStrip');
+            var bannerContent = document.getElementById('bannerContent');
+            
+            if (bannerStrip && bannerContent) {
+                // Arkaplan rengini güncelle
+                bannerStrip.style.background = bgColor;
+                
+                // 🔥 Şeridi görünür yap (Firebase'den renk geldi)
+                bannerStrip.style.visibility = 'visible';
+                
+                // Yazı renklerini güncelle
+                var spans = bannerContent.querySelectorAll('span');
+                spans.forEach(function(span) {
+                    span.style.color = textColor;
+                });
+                
+                console.log('✅ Banner güncellendi (urunx-8)');
+            }
         });
     });
-    
-    // localStorage değişikliklerini dinle
-    window.addEventListener('storage', function(e) {
-        if (e.key && (e.key.includes('_admin8_banner_bg_color') || e.key.includes('_admin8_banner_text_color'))) {
-            updateBannerStrip();
-        }
-    });
-    
-    // Sayfa içi değişiklikleri de dinle (aynı sekme)
-    var originalSetItem = localStorage.setItem;
-    localStorage.setItem = function(key, value) {
-        originalSetItem.apply(this, arguments);
-        if (key && (key.includes('_admin8_banner_bg_color') || key.includes('_admin8_banner_text_color'))) {
-            setTimeout(updateBannerStrip, 100);
-        }
-    };
 })();
 </script>
 <style>
