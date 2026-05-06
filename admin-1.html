@@ -127,10 +127,27 @@ function updateBannerFromColor(type) {
     }
     
     // localStorage'a kaydet
-    localStorage.setItem(getAdminKey('banner_bg_color'), document.getElementById('bannerBgColor').value);
-    localStorage.setItem(getAdminKey('banner_text_color'), document.getElementById('bannerTextColor').value);
+    var bgColor = document.getElementById('bannerBgColor').value;
+    var textColor = document.getElementById('bannerTextColor').value;
+    localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
+    localStorage.setItem(getAdminKey('banner_text_color'), textColor);
     
-    console.log('✅ Renk kaydedildi');
+    // 🔥 Firebase'e kaydet (telefon senkronizasyonu için)
+    if (typeof firebase !== 'undefined' && firebase.database) {
+        var db = firebase.database();
+        var bannerData = {
+            bgColor: bgColor,
+            textColor: textColor,
+            timestamp: Date.now()
+        };
+        db.ref('www_emenkargon_online/admin1/bannerColors').set(bannerData).then(function() {
+            console.log('🔥 Firebase\'e kaydedildi - Banner renkleri:', bannerData);
+        }).catch(function(error) {
+            console.error('❌ Firebase kayıt hatası:', error);
+        });
+    }
+    
+    console.log('✅ Renk kaydedildi - BG:', bgColor, 'Text:', textColor);
 }
 
 function updateBannerFromText(type) {
