@@ -3161,6 +3161,10 @@ function updateBannerSettings() {
     document.getElementById('bannerBgColorText').value = bgColor;
     document.getElementById('bannerTextColorText').value = textColor;
     
+    // localStorage'a da kaydet (yanıp sönmeyi önlemek için)
+    localStorage.setItem('emenkargon_online_admin1_banner_bg_color', bgColor);
+    localStorage.setItem('emenkargon_online_admin1_banner_text_color', textColor);
+    
     // Admin sayfasındaki banner'ı güncelle
     updateAdminBannerDisplay(bgColor, textColor);
     

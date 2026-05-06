@@ -381,6 +381,10 @@ function loadBannerSettings() {
                     texts = data.texts.join('\n');
                 }
                 console.log('🔥 Firebase\'den yüklendi - Banner renkleri (Index):', data);
+                
+                // localStorage'a da kaydet (bir sonraki yüklemede yanıp sönmeyi önlemek için)
+                localStorage.setItem('emenkargon_online_admin1_banner_bg_color', bgColor);
+                localStorage.setItem('emenkargon_online_admin1_banner_text_color', textColor);
             } else {
                 console.log('⚠️ Firebase\'de banner rengi yok, varsayılan kullanılıyor');
             }
