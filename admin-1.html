@@ -3388,6 +3388,9 @@ function updateBannerFromColor(type) {
     updateBannerSettings();
 }
 
+// Global scope'a ekle
+window.updateBannerFromColor = updateBannerFromColor;
+
 function updateBannerFromText(type) {
     if (type === 'bg') {
         var textValue = document.getElementById('bannerBgColorText').value.trim();
@@ -3427,6 +3430,9 @@ function updateBannerFromText(type) {
         }
     }
 }
+
+// Global scope'a ekle
+window.updateBannerFromText = updateBannerFromText;
 
 function isValidColor(color) {
     // Gelişmiş hex renk kontrolü - 3 veya 6 karakter
