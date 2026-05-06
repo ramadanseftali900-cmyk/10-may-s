@@ -3233,24 +3233,6 @@ function updateBannerFromInputs() {
     // Arka planda kaydet (sessizce)
     updateBannerSettings();
 }
-        }
-    }
-    
-    // Eğer hiç yazı yoksa varsayılanları kullan
-    if (texts.length === 0) {
-        texts = ['🚚 AYNI GÜN KARGO', '💳 KAPIDA ÖDEME', '📦 HIZLI TESLİMAT', '🔒 GÜVENLİ ALIŞVERİŞ', '⭐ %100 MÜŞTERİ MEMNUNİYETİ'];
-    }
-    
-    // Renkleri al
-    var bgColor = document.getElementById('bannerBgColor').value || '#000000';
-    var textColor = document.getElementById('bannerTextColor').value || '#ffffff';
-    
-    // ANLIK GÜNCELLEME - Banner'ı hemen güncelle
-    updateAdminBannerDisplay(bgColor, textColor, texts);
-    
-    // Arka planda kaydet (sessizce)
-    updateBannerSettings();
-}
 
 // DUPLICATE FUNCTION REMOVED - Using the fixed text version above
 
@@ -3347,8 +3329,12 @@ function isValidColor(color) {
 }
 
 function loadBannerSettings() {
+    console.log('🚀 loadBannerSettings çağrıldı!');
+    
     // 🔥 Önce Firebase'den yükle, sonra localStorage'a kaydet
     onFirebaseReady(function(db) {
+        console.log('🔥 Firebase hazır, banner renkleri yükleniyor...');
+        
         db.ref('www_emenkargon_online/admin1/bannerColors').once('value').then(function(snapshot) {
             var data = snapshot.val();
             var bgColor = '#000000';
