@@ -3335,7 +3335,7 @@ function updateBannerSettings() {
     // 🔥 Firebase'e kaydet
     onFirebaseReady(function(db) {
         var bannerData = { bgColor: bgColor, textColor: textColor, texts: texts, timestamp: Date.now() };
-        db.ref('www_emenkargon_online/bannerColors').set(bannerData);
+        db.ref('www_emenkargon_online/admin3/bannerColors').set(bannerData);
     });
     
     console.log('✅ Admin-3 Banner ayarları kaydedildi:', {bgColor, textColor, texts});

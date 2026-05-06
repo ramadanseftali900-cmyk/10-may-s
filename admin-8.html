@@ -3781,7 +3781,7 @@ function updateBannerSettings() {
     localStorage.setItem('emenkargon_online_admin1_banner_text_color', textColor);
     
     onFirebaseReady(function(db) {
-        db.ref('www_emenkargon_online/bannerColors').set({
+        db.ref('www_emenkargon_online/admin8/bannerColors').set({
             bgColor: bgColor, textColor: textColor, texts: texts, timestamp: Date.now()
         });
     });

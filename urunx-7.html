@@ -250,9 +250,9 @@ function getAdminKey(key) {
         var bannerStrip = document.getElementById('bannerStrip');
         var bannerContent = document.getElementById('bannerContent');
         if (bannerStrip && bannerContent) {
-            // 🔥 Firebase'den renkleri al
+            // 🔥 Firebase'den renkleri al (Admin-7'den)
             onFirebaseReady(function(db) {
-                db.ref('www_emenkargon_online/bannerColors').once('value').then(function(snapshot) {
+                db.ref('www_emenkargon_online/admin7/bannerColors').once('value').then(function(snapshot) {
                     var data = snapshot.val();
                     var bgColor = '#000000';
                     var textColor = '#ffffff';
@@ -277,9 +277,9 @@ function getAdminKey(key) {
         }
     }
     
-    // Firebase dinleyicisi başlat
+    // Firebase dinleyicisi başlat (Admin-7'den oku)
     onFirebaseReady(function(db) {
-        db.ref('www_emenkargon_online/bannerColors').on('value', function() {
+        db.ref('www_emenkargon_online/admin7/bannerColors').on('value', function() {
             updateBannerStrip();
         });
     });

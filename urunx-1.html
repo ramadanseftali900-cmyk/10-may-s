@@ -409,9 +409,9 @@ setTimeout(function() {
 // =============================================
 
 function loadBannerSettings() {
-    // 🔥 Firebase'den banner renklerini yükle
+    // 🔥 Firebase'den banner renklerini yükle (Admin-1'den)
     onFirebaseReady(function(db) {
-        db.ref('www_emenkargon_online/bannerColors').on('value', function(snapshot) {
+        db.ref('www_emenkargon_online/admin1/bannerColors').on('value', function(snapshot) {
             var data = snapshot.val();
             var bgColor = '#000000';
             var textColor = '#ffffff';

@@ -243,10 +243,10 @@ function getAdminKey(key) {
     document.write('</div>');
     document.write('</div>');
     
-    // 🔥 Firebase'den renkleri dinle
+    // 🔥 Firebase'den renkleri dinle (Admin-2'den)
     setTimeout(function() {
         onFirebaseReady(function(db) {
-            db.ref('www_emenkargon_online/bannerColors').on('value', function(snapshot) {
+            db.ref('www_emenkargon_online/admin2/bannerColors').on('value', function(snapshot) {
                 var data = snapshot.val();
                 if (data) {
                     var strip = document.getElementById('bannerStrip');

@@ -3139,8 +3139,8 @@ function updateBannerSettings() {
                 timestamp: Date.now()
             };
             
-            // Banner renklerini Firebase'e kaydet
-            db.ref('www_emenkargon_online/bannerColors').set(bannerData).then(function() {
+            // Banner renklerini Firebase'e kaydet (ADMIN-2 için)
+            db.ref('www_emenkargon_online/admin2/bannerColors').set(bannerData).then(function() {
                 console.log('🔥 Firebase\'e kaydedildi - Banner renkleri tüm cihazlarda görünecek:', bannerData);
                 alert('✅ Kayan yazı renkleri kaydedildi! Tüm cihazlarda görünecek.');
             }).catch(function(error) {
