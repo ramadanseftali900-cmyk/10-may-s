@@ -210,8 +210,13 @@ function getAdminKey(key) {
         return siteId + '_admin1_' + key; 
     }
     
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
+    // localStorage'dan renkleri al (varsayılan YOK, admin panelden gelecek)
+    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '';
+    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '';
+    
+    // Eğer renk yoksa, boş bırak (Firebase'den gelecek)
+    if (!bgColor) bgColor = 'transparent';
+    if (!textColor) textColor = 'transparent';
     
     document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;">');
     document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 20s linear infinite;">');
@@ -370,27 +375,27 @@ function loadBannerSettings() {
     onFirebaseReady(function(db) {
         db.ref('www_emenkargon_online/bannerColors').on('value', function(snapshot) {
             var data = snapshot.val();
-            var bgColor = '#000000';
-            var textColor = '#ffffff';
-            var texts = '🚚 AYNI GÜN KARGO\n💳 KAPIDA ÖDEME\n📦 HIZLI TESLİMAT\n🔒 GÜVENLİ ALIŞVERİŞ\n⭐ %100 MÜŞTERİ MEMNUNİYETİ\n✅ ÜCRETSİZ KARGO';
             
             if (data) {
-                bgColor = data.bgColor || '#000000';
-                textColor = data.textColor || '#ffffff';
+                var bgColor = data.bgColor;
+                var textColor = data.textColor;
+                var texts = '🚚 AYNI GÜN KARGO\n💳 KAPIDA ÖDEME\n📦 HIZLI TESLİMAT\n🔒 GÜVENLİ ALIŞVERİŞ\n⭐ %100 MÜŞTERİ MEMNUNİYETİ\n✅ ÜCRETSİZ KARGO';
+                
                 if (data.texts && Array.isArray(data.texts)) {
                     texts = data.texts.join('\n');
                 }
+                
                 console.log('🔥 Firebase\'den yüklendi - Banner renkleri (Index):', data);
                 
                 // localStorage'a da kaydet (bir sonraki yüklemede yanıp sönmeyi önlemek için)
                 localStorage.setItem('emenkargon_online_admin1_banner_bg_color', bgColor);
                 localStorage.setItem('emenkargon_online_admin1_banner_text_color', textColor);
+                
+                // Banner şeridini güncelle
+                updateBannerDisplay(bgColor, textColor, texts);
             } else {
-                console.log('⚠️ Firebase\'de banner rengi yok, varsayılan kullanılıyor');
+                console.log('⚠️ Firebase\'de banner rengi yok - Admin panelden renk seçin');
             }
-            
-            // Banner şeridini güncelle
-            updateBannerDisplay(bgColor, textColor, texts);
         });
     });
 }
