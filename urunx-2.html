@@ -211,8 +211,9 @@ function getAdminKey(key) {
     var bgColor = localStorage.getItem(getAdminKey('banner_bg_color'));
     var textColor = localStorage.getItem(getAdminKey('banner_text_color'));
     
-    // Eğer localStorage'da renk varsa kullan, yoksa gizle (Firebase'den gelecek)
-    var visibility = (bgColor && textColor) ? 'visible' : 'hidden';
+    // Eğer localStorage'da renk varsa VE default değil ise kullan, yoksa gizle
+    var hasValidColors = bgColor && textColor && bgColor !== '#000000' && bgColor !== '#ffffff';
+    var visibility = hasValidColors ? 'visible' : 'hidden';
     if (!bgColor) bgColor = '#000000';
     if (!textColor) textColor = '#ffffff';
     
@@ -256,6 +257,8 @@ function getAdminKey(key) {
                 // localStorage'a kaydet
                 localStorage.setItem(getAdminKey('banner_bg_color'), data.bgColor);
                 localStorage.setItem(getAdminKey('banner_text_color'), data.textColor);
+            } else {
+                console.log('⚠️ Firebase\'de banner rengi yok (urunx-2) - Banner gizli kalacak');
             }
         });
     });
