@@ -409,9 +409,13 @@ setTimeout(function() {
 // =============================================
 
 function loadBannerSettings() {
-    // 🔥 Firebase'den banner renklerini yükle (Admin-1'den)
+    console.log('🚀 loadBannerSettings çağrıldı (urunx-1)');
+    
+    // 🔥 Firebase'den banner renklerini yükle (Admin-1'den) - SADECE BİR KEZ
     onFirebaseReady(function(db) {
-        db.ref('www_emenkargon_online/admin1/bannerColors').on('value', function(snapshot) {
+        console.log('🔥 Firebase hazır, banner renkleri yükleniyor (urunx-1)...');
+        
+        db.ref('www_emenkargon_online/admin1/bannerColors').once('value').then(function(snapshot) {
             var data = snapshot.val();
             var bgColor = '#000000';
             var textColor = '#ffffff';
@@ -419,10 +423,19 @@ function loadBannerSettings() {
             if (data) {
                 bgColor = data.bgColor || '#000000';
                 textColor = data.textColor || '#ffffff';
+                console.log('🔥 Firebase\'den yüklendi (urunx-1) - BG:', bgColor, 'Text:', textColor);
+                
+                // localStorage'a kaydet
+                localStorage.setItem('www_emenkargon_online_admin1_banner_bg_color', bgColor);
+                localStorage.setItem('www_emenkargon_online_admin1_banner_text_color', textColor);
+            } else {
+                console.log('⚠️ Firebase\'de banner rengi yok (urunx-1)');
             }
             
             // Banner şeridini güncelle
             updateBannerDisplay(bgColor, textColor);
+        }).catch(function(error) {
+            console.error('❌ Firebase yükleme hatası (urunx-1):', error);
         });
     });
 }

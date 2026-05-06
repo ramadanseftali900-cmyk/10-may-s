@@ -372,9 +372,9 @@ setTimeout(function() {
 // =============================================
 
 function loadBannerSettings() {
-    // 🔥 Firebase'den banner renklerini yükle (Admin-1'den)
+    // 🔥 Firebase'den banner renklerini yükle (Admin-1'den) - SADECE BİR KEZ
     onFirebaseReady(function(db) {
-        db.ref('www_emenkargon_online/admin1/bannerColors').on('value', function(snapshot) {
+        db.ref('www_emenkargon_online/admin1/bannerColors').once('value').then(function(snapshot) {
             var data = snapshot.val();
             
             if (data) {
@@ -397,6 +397,8 @@ function loadBannerSettings() {
             } else {
                 console.log('⚠️ Firebase\'de banner rengi yok - Admin panelden renk seçin');
             }
+        }).catch(function(error) {
+            console.error('❌ Firebase yükleme hatası:', error);
         });
     });
 }
