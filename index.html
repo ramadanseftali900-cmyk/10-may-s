@@ -210,15 +210,16 @@ function getAdminKey(key) {
         return siteId + '_admin1_' + key; 
     }
     
-    // localStorage'dan renkleri al (varsayılan YOK, admin panelden gelecek)
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '';
+    // localStorage'dan renkleri al
+    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color'));
+    var textColor = localStorage.getItem(getAdminKey('banner_text_color'));
     
-    // Eğer renk yoksa, boş bırak (Firebase'den gelecek)
-    if (!bgColor) bgColor = 'transparent';
-    if (!textColor) textColor = 'transparent';
+    // Eğer localStorage'da renk varsa kullan, yoksa gizle (Firebase'den gelecek)
+    var visibility = (bgColor && textColor) ? 'visible' : 'hidden';
+    if (!bgColor) bgColor = '#000000';
+    if (!textColor) textColor = '#ffffff';
     
-    document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;">');
+    document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;visibility:' + visibility + ';">');
     document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 20s linear infinite;">');
     document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">🚚 AYNI GÜN KARGO</span>');
     document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">💳 KAPIDA ÖDEME</span>');
@@ -408,6 +409,9 @@ function updateBannerDisplay(bgColor, textColor, texts) {
     if (bannerStrip && bannerContent) {
         // Arkaplan rengini güncelle
         bannerStrip.style.background = bgColor;
+        
+        // Şeridi görünür yap (artık doğru renk var)
+        bannerStrip.style.visibility = 'visible';
         
         // Yazıları güncelle
         var textArray = texts.split('\n').filter(function(text) {

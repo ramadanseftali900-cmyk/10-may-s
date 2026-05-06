@@ -207,8 +207,14 @@ function getAdminKey(key) {
         return siteId + '_admin2_' + key; 
     }
     
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
+    // localStorage'dan renkleri al
+    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color'));
+    var textColor = localStorage.getItem(getAdminKey('banner_text_color'));
+    
+    // Eğer localStorage'da renk varsa kullan, yoksa gizle (Firebase'den gelecek)
+    var visibility = (bgColor && textColor) ? 'visible' : 'hidden';
+    if (!bgColor) bgColor = '#000000';
+    if (!textColor) textColor = '#ffffff';
     
     // Admin panelinden girilen yazıları al
     var texts = [];
@@ -224,7 +230,7 @@ function getAdminKey(key) {
         texts = ['🚚 AYNI GÜN KARGO', '💳 KAPIDA ÖDEME', '📦 HIZLI TESLİMAT', '🔒 GÜVENLİ ALIŞVERİŞ', '⭐ %100 MÜŞTERİ MEMNUNİYETİ', '✅ ÜCRETSİZ KARGO'];
     }
     
-    document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;">');
+    document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;visibility:' + visibility + ';">');
     document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 20s linear infinite;">');
     
     // Yazıları 2 kez tekrarla ki kesintisiz dönsün
@@ -245,7 +251,10 @@ function getAdminKey(key) {
                 if (data) {
                     var strip = document.getElementById('bannerStrip');
                     var content = document.getElementById('bannerContent');
-                    if (strip) strip.style.background = data.bgColor || '#000000';
+                    if (strip) {
+                        strip.style.background = data.bgColor || '#000000';
+                        strip.style.visibility = 'visible'; // 🔥 Şeridi görünür yap
+                    }
                     if (content) {
                         var spans = content.querySelectorAll('span');
                         spans.forEach(function(span) { span.style.color = data.textColor || '#ffffff'; });

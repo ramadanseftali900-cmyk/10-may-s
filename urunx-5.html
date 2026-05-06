@@ -208,13 +208,19 @@ function getAdminKey(key) {
         return siteId + '_admin5_' + key; 
     }
     
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
+    // localStorage'dan renkleri al
+    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color'));
+    var textColor = localStorage.getItem(getAdminKey('banner_text_color'));
+    
+    // Eğer localStorage'da renk varsa kullan, yoksa gizle (Firebase'den gelecek)
+    var visibility = (bgColor && textColor) ? 'visible' : 'hidden';
+    if (!bgColor) bgColor = '#000000';
+    if (!textColor) textColor = '#ffffff';
     
     // Sabit yazılar
     var texts = ['🚚 AYNI GÜN KARGO', '💳 KAPIDA ÖDEME', '📦 HIZLI TESLİMAT', '🔒 GÜVENLİ ALIŞVERİŞ', '⭐ %100 MÜŞTERİ MEMNUNİYETİ', '✅ ÜCRETSİZ KARGO'];
     
-    document.write('<div style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;">');
+    document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;visibility:' + visibility + ';">');
     document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 20s linear infinite;">');
     
     // Yazıları 2 kez tekrarla (kayan efekt için)
@@ -240,8 +246,9 @@ function getAdminKey(key) {
     
     // Kayan yazı şeridini güncelle
     function updateBannerStrip() {
-        var bannerDiv = document.querySelector('div[style*="animation:kayanYazi"]');
-        if (bannerDiv && bannerDiv.parentElement) {
+        var bannerStrip = document.getElementById('bannerStrip');
+        var bannerContent = document.getElementById('bannerContent');
+        if (bannerStrip && bannerContent) {
             // 🔥 Firebase'den renkleri al
             onFirebaseReady(function(db) {
                 db.ref('www_emenkargon_online/bannerColors').once('value').then(function(snapshot) {
@@ -254,10 +261,13 @@ function getAdminKey(key) {
                     }
                     
                     // Arkaplan rengini güncelle
-                    bannerDiv.parentElement.style.background = bgColor;
+                    bannerStrip.style.background = bgColor;
+                    
+                    // 🔥 Şeridi görünür yap (Firebase'den renk geldi)
+                    bannerStrip.style.visibility = 'visible';
                     
                     // Yazı renklerini güncelle
-                    var spans = bannerDiv.querySelectorAll('span');
+                    var spans = bannerContent.querySelectorAll('span');
                     for (var i = 0; i < spans.length; i++) {
                         spans[i].style.color = textColor;
                     }

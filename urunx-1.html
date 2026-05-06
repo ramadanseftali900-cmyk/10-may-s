@@ -237,10 +237,16 @@ function getAdminKey(key) {
         return siteId + '_admin1_' + key; 
     }
     
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
+    // localStorage'dan renkleri al
+    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color'));
+    var textColor = localStorage.getItem(getAdminKey('banner_text_color'));
     
-    document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;">');
+    // Eğer localStorage'da renk varsa kullan, yoksa gizle (Firebase'den gelecek)
+    var visibility = (bgColor && textColor) ? 'visible' : 'hidden';
+    if (!bgColor) bgColor = '#000000';
+    if (!textColor) textColor = '#ffffff';
+    
+    document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;visibility:' + visibility + ';">');
     document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 20s linear infinite;">');
     document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">🚚 AYNI GÜN KARGO</span>');
     document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">💳 KAPIDA ÖDEME</span>');
@@ -429,6 +435,9 @@ function updateBannerDisplay(bgColor, textColor) {
     if (bannerStrip && bannerContent) {
         // Arkaplan rengini güncelle
         bannerStrip.style.background = bgColor;
+        
+        // 🔥 Şeridi görünür yap (Firebase'den renk geldi)
+        bannerStrip.style.visibility = 'visible';
         
         // SABİT METİNLERİ KULLAN
         var fixedTexts = [
