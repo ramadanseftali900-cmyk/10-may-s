@@ -698,8 +698,6 @@ console.log('✅ Erken script bloğu yüklendi - loadSavedImages ve DOMContentLo
   </div>
 </div>
 
-<button onclick="updateBannerSettings(); alert('✅ Kayan yazı renkleri kaydedildi!');" style="width:100%;background:#28a745;color:#fff;border:none;padding:12px;border-radius:6px;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:20px;box-sizing:border-box;">RENK AYARLARINI KAYDET</button>
-
 <h3 style="color:#9c27b0;font-weight:900;margin-bottom:15px;margin-top:30px;border-bottom:2px solid #9c27b0;padding-bottom:10px;">📋 HIZLI SİPARİŞ ŞERİDİ</h3>
 
 <div style="margin-bottom:15px;">
@@ -718,8 +716,6 @@ console.log('✅ Erken script bloğu yüklendi - loadSavedImages ve DOMContentLo
     </div>
   </div>
 </div>
-
-<button onclick="updateSiparisSeridiSettings(); alert('✅ Hızlı sipariş şeridi ayarları kaydedildi!');" style="width:100%;background:#28a745;color:#fff;border:none;padding:12px;border-radius:6px;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:20px;box-sizing:border-box;">HIZLI SİPARİŞ ŞERİDİ AYARLARINI KAYDET</button>
 
 <h3 style="color:#e94560;font-weight:900;margin-bottom:15px;margin-top:30px;border-bottom:2px solid #e94560;padding-bottom:10px;">🖼️ GÖRSELLER</h3>
 <h3 style="color:#000;font-weight:900;margin-bottom:8px;margin-top:15px;">Üst Görsel 1</h3>
@@ -2851,26 +2847,9 @@ function updateBedenDropdown(selectElement) {
 }
 
 function loadRenkBedenSettings() {
-    // Önce Firebase'den oku, sonra butonları güncelle
-    if (typeof database !== 'undefined' && database) {
-        database.ref(SITE_ID + '/urunAyarlari/urun8/renkBedenDurumlari').once('value', function(snapshot) {
-            var data = snapshot.val();
-            if (data) {
-                for (var key in data) {
-                    localStorage.setItem(getAdminKey(key), data[key]);
-                }
-                console.log('✅ Renk/Beden durumları Firebase\'den yüklendi');
-            }
-            renkBedenButonlariniGuncelle();
-        });
-    } else {
-        renkBedenButonlariniGuncelle();
-        if (typeof onFirebaseReady === 'function') {
-            onFirebaseReady(function() {
-                loadRenkBedenSettings();
-            });
-        }
-    }
+    // Sadece localStorage'dan yükle - Firebase sync kaldırıldı
+    console.log('📦 Renk/Beden ayarları localStorage\'dan yükleniyor (Firebase devre dışı)');
+    renkBedenButonlariniGuncelle();
 }
 
 function renkBedenButonlariniGuncelle() {

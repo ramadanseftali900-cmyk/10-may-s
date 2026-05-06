@@ -1806,7 +1806,7 @@ formShowTimeout = setTimeout(function() {
 <script>
 // RENK/BEDEN YÖNETİM SİSTEMİ - MÜŞTERİ SAYFASI
 function loadCustomerRenkBedenSettings() {
-    // Önce localStorage'dan hızlı yükle
+    // Önce localStorage'dan hızlı yükle (cache)
     try {
         var aktifRenkler = JSON.parse(localStorage.getItem(getAdminKey('aktif_renkler')) || '[]');
         var aktifBedenler = JSON.parse(localStorage.getItem(getAdminKey('aktif_bedenler')) || '[]');
@@ -1815,29 +1815,15 @@ function loadCustomerRenkBedenSettings() {
         console.log('Renk/Beden ayarları yüklenemedi:', e);
     }
     
-    // Firebase'den de güncel verileri çek
+    // Sonra Firebase'den güncel veriyi al (telefon senkronizasyonu için)
     if (typeof database !== 'undefined' && database) {
-        database.ref(SITE_ID + '/urunAyarlari/urun7/renkBedenDurumlari').once('value', function(snapshot) {
+        database.ref(SITE_ID + '/urunAyarlari/urun7/aktifSecenekler').once('value', function(snapshot) {
             var data = snapshot.val();
-            if (data) {
-                for (var key in data) {
-                    localStorage.setItem(getAdminKey(key), data[key]);
-                }
-                // Aktif renkleri ve bedenleri yeniden hesapla
-                var renkler = [];
-                var bedenler = [];
-                for (var k in data) {
-                    if (k.startsWith('renk_') && data[k] === 'eklendi') {
-                        renkler.push(k.replace('renk_', ''));
-                    }
-                    if (k.startsWith('beden_') && data[k] === 'eklendi') {
-                        bedenler.push(k.replace('beden_', ''));
-                    }
-                }
-                localStorage.setItem(getAdminKey('aktif_renkler'), JSON.stringify(renkler));
-                localStorage.setItem(getAdminKey('aktif_bedenler'), JSON.stringify(bedenler));
-                updateCustomerDropdowns(renkler, bedenler);
-                console.log('✅ Renk/Beden Firebase\'den güncellendi - Renkler:', renkler, 'Bedenler:', bedenler);
+            if (data && data.aktif_renkler && data.aktif_bedenler) {
+                localStorage.setItem(getAdminKey('aktif_renkler'), JSON.stringify(data.aktif_renkler));
+                localStorage.setItem(getAdminKey('aktif_bedenler'), JSON.stringify(data.aktif_bedenler));
+                updateCustomerDropdowns(data.aktif_renkler, data.aktif_bedenler);
+                console.log('✅ Renk/Beden Firebase\'den güncellendi (urunx-7)');
             }
         });
     }

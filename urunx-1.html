@@ -233,7 +233,7 @@ function getAdminKey(key) {
 // Banner renklerini HEMEN al ve HTML'i oluştur
 (function() {
     function getAdminKey(key) { 
-        var siteId = 'emenkargon_online';
+        var siteId = 'www_emenkargon_online';
         return siteId + '_admin1_' + key; 
     }
     
@@ -1863,38 +1863,41 @@ formShowTimeout = setTimeout(function() {
 <script>
 // RENK/BEDEN YÖNETİM SİSTEMİ - MÜŞTERİ SAYFASI
 function loadCustomerRenkBedenSettings() {
-    // Önce localStorage'dan hızlı yükle
+    console.log('🚀 loadCustomerRenkBedenSettings başladı (urunx-1)');
+    
+    // Önce localStorage'dan hızlı yükle (cache)
     try {
-        var aktifRenkler = JSON.parse(localStorage.getItem(getAdminKey('aktif_renkler')) || '[]');
-        var aktifBedenler = JSON.parse(localStorage.getItem(getAdminKey('aktif_bedenler')) || '[]');
+        var aktifRenklerStr = localStorage.getItem(getAdminKey('aktif_renkler'));
+        var aktifBedenlerStr = localStorage.getItem(getAdminKey('aktif_bedenler'));
+        
+        console.log('📦 localStorage\'dan okunan - aktif_renkler:', aktifRenklerStr);
+        console.log('📦 localStorage\'dan okunan - aktif_bedenler:', aktifBedenlerStr);
+        
+        var aktifRenkler = JSON.parse(aktifRenklerStr || '[]');
+        var aktifBedenler = JSON.parse(aktifBedenlerStr || '[]');
+        
+        console.log('🎨 Parse edilmiş - Renkler:', aktifRenkler, 'Bedenler:', aktifBedenler);
+        
         updateCustomerDropdowns(aktifRenkler, aktifBedenler);
     } catch(e) {
-        console.log('Renk/Beden ayarları yüklenemedi:', e);
+        console.log('❌ Renk/Beden ayarları yüklenemedi:', e);
     }
     
-    // Firebase'den de güncel verileri çek
+    // Sonra Firebase'den güncel veriyi al (telefon senkronizasyonu için)
     if (typeof database !== 'undefined' && database) {
-        database.ref(SITE_ID + '/urunAyarlari/urun1/renkBedenDurumlari').once('value', function(snapshot) {
+        database.ref(SITE_ID + '/urunAyarlari/urun1/aktifSecenekler').once('value', function(snapshot) {
             var data = snapshot.val();
-            if (data) {
-                for (var key in data) {
-                    localStorage.setItem(getAdminKey(key), data[key]);
-                }
-                // Aktif renkleri ve bedenleri yeniden hesapla
-                var renkler = [];
-                var bedenler = [];
-                for (var k in data) {
-                    if (k.startsWith('renk_') && data[k] === 'eklendi') {
-                        renkler.push(k.replace('renk_', ''));
-                    }
-                    if (k.startsWith('beden_') && data[k] === 'eklendi') {
-                        bedenler.push(k.replace('beden_', ''));
-                    }
-                }
-                localStorage.setItem(getAdminKey('aktif_renkler'), JSON.stringify(renkler));
-                localStorage.setItem(getAdminKey('aktif_bedenler'), JSON.stringify(bedenler));
-                updateCustomerDropdowns(renkler, bedenler);
-                console.log('✅ Renk/Beden Firebase\'den güncellendi - Renkler:', renkler, 'Bedenler:', bedenler);
+            if (data && data.aktif_renkler && data.aktif_bedenler) {
+                console.log('🔥 Firebase\'den alınan - Renkler:', data.aktif_renkler, 'Bedenler:', data.aktif_bedenler);
+                
+                // localStorage'ı güncelle
+                localStorage.setItem(getAdminKey('aktif_renkler'), JSON.stringify(data.aktif_renkler));
+                localStorage.setItem(getAdminKey('aktif_bedenler'), JSON.stringify(data.aktif_bedenler));
+                
+                // Dropdown'ları güncelle
+                updateCustomerDropdowns(data.aktif_renkler, data.aktif_bedenler);
+                
+                console.log('✅ Renk/Beden Firebase\'den güncellendi ve localStorage\'a kaydedildi');
             }
         });
     }
@@ -2039,6 +2042,8 @@ function loadRenkBedenDropdowns() {
 }
 
 function updateCustomerDropdowns(aktifRenkler, aktifBedenler) {
+    console.log('🎨 updateCustomerDropdowns çağrıldı (urunx-1) - Renkler:', aktifRenkler, 'Bedenler:', aktifBedenler);
+    
     var renkIsimleri = {
         'siyah': '⚫ Siyah',
         'beyaz': '⚪ Beyaz', 

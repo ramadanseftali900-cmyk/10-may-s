@@ -206,7 +206,7 @@ function getAdminKey(key) {
 // Banner renklerini HEMEN al ve HTML'i oluştur
 (function() {
     function getAdminKey(key) { 
-        var siteId = 'emenkargon_online';
+        var siteId = 'www_emenkargon_online';
         return siteId + '_admin1_' + key; 
     }
     
@@ -389,8 +389,8 @@ function loadBannerSettings() {
                 console.log('🔥 Firebase\'den yüklendi - Banner renkleri (Index):', data);
                 
                 // localStorage'a da kaydet (bir sonraki yüklemede yanıp sönmeyi önlemek için)
-                localStorage.setItem('emenkargon_online_admin1_banner_bg_color', bgColor);
-                localStorage.setItem('emenkargon_online_admin1_banner_text_color', textColor);
+                localStorage.setItem('www_emenkargon_online_admin1_banner_bg_color', bgColor);
+                localStorage.setItem('www_emenkargon_online_admin1_banner_text_color', textColor);
                 
                 // Banner şeridini güncelle
                 updateBannerDisplay(bgColor, textColor, texts);
@@ -434,9 +434,8 @@ function updateBannerDisplay(bgColor, textColor, texts) {
 
 // Sayfa yüklenince banner ayarlarını yükle
 document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-        loadBannerSettings();
-    }, 500);
+    // HEMEN yükle - zaten HTML'de localStorage'dan geldi
+    loadBannerSettings();
 });
 </script>
 <div class="formWrapper" style="position:relative;">
@@ -444,8 +443,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- HIZLI SİPARİŞ FORMU ÇUBUĞU -->
 <script>
 // HEMEN HTML'e yaz - hiç beklemeden
-var bgColor = localStorage.getItem('emenkargon_online_admin1_siparis_seridi_bg_color') || '#000000';
-var textColor = localStorage.getItem('emenkargon_online_admin1_siparis_seridi_text_color') || '#ffffff';
+var bgColor = localStorage.getItem('www_emenkargon_online_admin1_siparis_seridi_bg_color') || '#000000';
+var textColor = localStorage.getItem('www_emenkargon_online_admin1_siparis_seridi_text_color') || '#ffffff';
 
 document.write('<div id="siparisSeridi" style="width:100%;background:' + bgColor + ';padding:10px 0;text-align:center;border-radius:8px 8px 0 0;margin-bottom:10px;">');
 document.write('<span id="siparisSeridiText" style="color:' + textColor + ';font-size:20px;font-weight:900;letter-spacing:2px;display:inline-block;animation:buyukKucul 0.8s ease-in-out infinite;">📋 HIZLI SİPARİŞ FORMU</span>');
@@ -1822,38 +1821,41 @@ formShowTimeout = setTimeout(function() {
 <script>
 // RENK/BEDEN YÖNETİM SİSTEMİ - MÜŞTERİ SAYFASI
 function loadCustomerRenkBedenSettings() {
-    // Önce localStorage'dan hızlı yükle
+    console.log('🚀 loadCustomerRenkBedenSettings başladı');
+    
+    // Önce localStorage'dan hızlı yükle (cache)
     try {
-        var aktifRenkler = JSON.parse(localStorage.getItem(getAdminKey('aktif_renkler')) || '[]');
-        var aktifBedenler = JSON.parse(localStorage.getItem(getAdminKey('aktif_bedenler')) || '[]');
+        var aktifRenklerStr = localStorage.getItem(getAdminKey('aktif_renkler'));
+        var aktifBedenlerStr = localStorage.getItem(getAdminKey('aktif_bedenler'));
+        
+        console.log('📦 localStorage\'dan okunan - aktif_renkler:', aktifRenklerStr);
+        console.log('📦 localStorage\'dan okunan - aktif_bedenler:', aktifBedenlerStr);
+        
+        var aktifRenkler = JSON.parse(aktifRenklerStr || '[]');
+        var aktifBedenler = JSON.parse(aktifBedenlerStr || '[]');
+        
+        console.log('🎨 Parse edilmiş - Renkler:', aktifRenkler, 'Bedenler:', aktifBedenler);
+        
         updateCustomerDropdowns(aktifRenkler, aktifBedenler);
     } catch(e) {
-        console.log('Renk/Beden ayarları yüklenemedi:', e);
+        console.log('❌ Renk/Beden ayarları yüklenemedi:', e);
     }
     
-    // Firebase'den de güncel verileri çek
+    // Sonra Firebase'den güncel veriyi al (telefon senkronizasyonu için)
     if (typeof database !== 'undefined' && database) {
-        database.ref(SITE_ID + '/urunAyarlari/urun1/renkBedenDurumlari').once('value', function(snapshot) {
+        database.ref(SITE_ID + '/urunAyarlari/urun1/aktifSecenekler').once('value', function(snapshot) {
             var data = snapshot.val();
-            if (data) {
-                for (var key in data) {
-                    localStorage.setItem(getAdminKey(key), data[key]);
-                }
-                // Aktif renkleri ve bedenleri yeniden hesapla
-                var renkler = [];
-                var bedenler = [];
-                for (var k in data) {
-                    if (k.startsWith('renk_') && data[k] === 'eklendi') {
-                        renkler.push(k.replace('renk_', ''));
-                    }
-                    if (k.startsWith('beden_') && data[k] === 'eklendi') {
-                        bedenler.push(k.replace('beden_', ''));
-                    }
-                }
-                localStorage.setItem(getAdminKey('aktif_renkler'), JSON.stringify(renkler));
-                localStorage.setItem(getAdminKey('aktif_bedenler'), JSON.stringify(bedenler));
-                updateCustomerDropdowns(renkler, bedenler);
-                console.log('✅ Renk/Beden Firebase\'den güncellendi - Renkler:', renkler, 'Bedenler:', bedenler);
+            if (data && data.aktif_renkler && data.aktif_bedenler) {
+                console.log('🔥 Firebase\'den alınan - Renkler:', data.aktif_renkler, 'Bedenler:', data.aktif_bedenler);
+                
+                // localStorage'ı güncelle
+                localStorage.setItem(getAdminKey('aktif_renkler'), JSON.stringify(data.aktif_renkler));
+                localStorage.setItem(getAdminKey('aktif_bedenler'), JSON.stringify(data.aktif_bedenler));
+                
+                // Dropdown'ları güncelle
+                updateCustomerDropdowns(data.aktif_renkler, data.aktif_bedenler);
+                
+                console.log('✅ Renk/Beden Firebase\'den güncellendi ve localStorage\'a kaydedildi');
             }
         });
     }
@@ -1998,6 +2000,8 @@ function loadRenkBedenDropdowns() {
 }
 
 function updateCustomerDropdowns(aktifRenkler, aktifBedenler) {
+    console.log('🎨 updateCustomerDropdowns çağrıldı - Renkler:', aktifRenkler, 'Bedenler:', aktifBedenler);
+    
     var renkIsimleri = {
         'siyah': '⚫ Siyah',
         'beyaz': '⚪ Beyaz', 
@@ -2105,29 +2109,24 @@ window.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    // localStorage'dan da hemen yükle (hız için)
-    setTimeout(function() {
-        loadCustomerRenkBedenSettings();
-        loadUrunSecenekleri();
-        loadRenkBedenDropdowns();
-    }, 500);
+    // localStorage'dan da HEMEN yükle (hız için)
+    loadCustomerRenkBedenSettings();
+    loadUrunSecenekleri();
+    loadRenkBedenDropdowns();
 });
 
 // Sayfa tamamen yüklenince de bir kez daha kontrol et
 window.addEventListener('load', function() {
-    setTimeout(function() {
-        loadCustomerRenkBedenSettings();
-        loadUrunSecenekleri();
-        loadRenkBedenDropdowns();
+    loadCustomerRenkBedenSettings();
+    loadUrunSecenekleri();
+    loadRenkBedenDropdowns();
     }, 1000);
 });
 
 // Form gösterildikten sonra da kontrol et
-setTimeout(function() {
-    loadCustomerRenkBedenSettings();
-    loadUrunSecenekleri();
-    loadRenkBedenDropdowns();
-}, 2000);
+loadCustomerRenkBedenSettings();
+loadUrunSecenekleri();
+loadRenkBedenDropdowns();
 
 // localStorage değişikliklerini dinle (admin panelinden değişiklik olursa)
 window.addEventListener('storage', function(e) {
@@ -2512,6 +2511,10 @@ function updateSiparisSeridiDisplayFromAdmin(bgColor, textColor) {
         // Yazı rengini güncelle
         siparisSeridiText.style.color = textColor;
         
+        // localStorage'a da kaydet (bir sonraki yüklemede yanıp sönmeyi önlemek için)
+        localStorage.setItem('www_emenkargon_online_admin1_siparis_seridi_bg_color', bgColor);
+        localStorage.setItem('www_emenkargon_online_admin1_siparis_seridi_text_color', textColor);
+        
         console.log('✅ Hızlı sipariş şeridi görünümü güncellendi:', bgColor, textColor);
     } else {
         console.log('❌ Hızlı sipariş şeridi elementleri bulunamadı!');
@@ -2522,19 +2525,19 @@ function updateSiparisSeridiDisplayFromAdmin(bgColor, textColor) {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📄 Index.html yüklendi, hızlı sipariş şeridi kontrol ediliyor...');
     
-    // Firebase'den renkleri yükle
+    // HEMEN yükle - zaten HTML'de localStorage'dan geldi
     loadSiparisSeridiSettingsFromAdmin();
 });
 
 // Window focus olduğunda
 window.addEventListener('focus', function() {
-    setTimeout(loadSiparisSeridiSettingsFromAdmin, 200);
+    loadSiparisSeridiSettingsFromAdmin();
 });
 
 // Sayfa görünür olduğunda
 document.addEventListener('visibilitychange', function() {
     if (!document.hidden) {
-        setTimeout(loadSiparisSeridiSettingsFromAdmin, 300);
+        loadSiparisSeridiSettingsFromAdmin();
     }
 });
 </script>
