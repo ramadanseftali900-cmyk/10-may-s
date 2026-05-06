@@ -256,15 +256,15 @@ var SITE_ID = 'www_emenkargon_online';
   <div style="margin-bottom:10px;">
     <label style="display:block;font-weight:bold;margin-bottom:5px;color:#000;">Arkaplan Rengi:</label>
     <div style="display:flex;gap:5px;align-items:center;">
-      <input type="color" id="bannerBgColor" value="#000000" style="width:60px;height:40px;border:2px solid #ddd;border-radius:6px;cursor:pointer;box-sizing:border-box;" onchange="document.getElementById('bannerStrip').style.background=this.value; document.getElementById('bannerBgColorText').value=this.value; updateBannerSettings();">
-      <input type="text" id="bannerBgColorText" value="#000000" placeholder="#000000" style="flex:1;height:40px;border:2px solid #ddd;border-radius:6px;padding:0 10px;font-size:14px;font-family:monospace;box-sizing:border-box;" onchange="if(this.value.match(/^#[0-9A-Fa-f]{6}$/)){document.getElementById('bannerStrip').style.background=this.value; document.getElementById('bannerBgColor').value=this.value; updateBannerSettings();}" onkeyup="if(this.value.match(/^#[0-9A-Fa-f]{6}$/)){document.getElementById('bannerStrip').style.background=this.value; document.getElementById('bannerBgColor').value=this.value;}" onblur="if(this.value.match(/^#[0-9A-Fa-f]{6}$/)){updateBannerSettings();}">
+      <input type="color" id="bannerBgColor" value="#000000" style="width:60px;height:40px;border:2px solid #ddd;border-radius:6px;cursor:pointer;box-sizing:border-box;" onchange="updateBannerFromColor('bg')">
+      <input type="text" id="bannerBgColorText" value="#000000" placeholder="#000000" style="flex:1;height:40px;border:2px solid #ddd;border-radius:6px;padding:0 10px;font-size:14px;font-family:monospace;box-sizing:border-box;" onchange="updateBannerFromText('bg')" onkeyup="updateBannerFromText('bg')" onpaste="setTimeout(function(){updateBannerFromText('bg')}, 10)">
     </div>
   </div>
   <div style="margin-bottom:10px;">
     <label style="display:block;font-weight:bold;margin-bottom:5px;color:#000;">Yazı Rengi:</label>
     <div style="display:flex;gap:5px;align-items:center;">
-      <input type="color" id="bannerTextColor" value="#ffffff" style="width:60px;height:40px;border:2px solid #ddd;border-radius:6px;cursor:pointer;box-sizing:border-box;" onchange="var spans=document.querySelectorAll('#bannerContent span'); for(var i=0;i<spans.length;i++){spans[i].style.color=this.value;} document.getElementById('bannerTextColorText').value=this.value; updateBannerSettings();">
-      <input type="text" id="bannerTextColorText" value="#ffffff" placeholder="#ffffff" style="flex:1;height:40px;border:2px solid #ddd;border-radius:6px;padding:0 10px;font-size:14px;font-family:monospace;box-sizing:border-box;" onchange="if(this.value.match(/^#[0-9A-Fa-f]{6}$/)){var spans=document.querySelectorAll('#bannerContent span'); for(var i=0;i<spans.length;i++){spans[i].style.color=this.value;} document.getElementById('bannerTextColor').value=this.value; updateBannerSettings();}" onkeyup="if(this.value.match(/^#[0-9A-Fa-f]{6}$/)){var spans=document.querySelectorAll('#bannerContent span'); for(var i=0;i<spans.length;i++){spans[i].style.color=this.value;} document.getElementById('bannerTextColor').value=this.value;}" onblur="if(this.value.match(/^#[0-9A-Fa-f]{6}$/)){updateBannerSettings();}">
+      <input type="color" id="bannerTextColor" value="#ffffff" style="width:60px;height:40px;border:2px solid #ddd;border-radius:6px;cursor:pointer;box-sizing:border-box;" onchange="updateBannerFromColor('text')">
+      <input type="text" id="bannerTextColorText" value="#ffffff" placeholder="#ffffff" style="flex:1;height:40px;border:2px solid #ddd;border-radius:6px;padding:0 10px;font-size:14px;font-family:monospace;box-sizing:border-box;" onchange="updateBannerFromText('text')" onkeyup="updateBannerFromText('text')" onpaste="setTimeout(function(){updateBannerFromText('text')}, 10)">
     </div>
   </div>
 </div>
