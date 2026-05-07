@@ -2331,6 +2331,9 @@ function toggleRenk(renkAdi) {
         localStorage.setItem(getAdminKey('renk_' + renkAdi), 'eklendi');
     }
     
+    // Aktif renkleri güncelle ve localStorage'a kaydet
+    updateAktifRenkler();
+    
     // Tüm dropdown'ları güncelle
     updateAllDropdowns();
     
@@ -2340,6 +2343,25 @@ function toggleRenk(renkAdi) {
         data['renk_' + renkAdi] = currentState === 'eklendi' ? 'eklenmedi' : 'eklendi';
         database.ref(SITE_ID + '/urunAyarlari/urun3/renkBedenDurumlari').update(data);
     }
+}
+
+// Aktif renkleri hesapla ve localStorage + Firebase'e kaydet
+function updateAktifRenkler() {
+    var renkler = ['siyah', 'beyaz', 'gri', 'lacivert', 'kahverengi', 'kirmizi', 'mavi', 'yesil', 'sari', 'turuncu', 'mor', 'pembe', 'bordo', 'haki', 'bej', 'krem', 'fume', 'antrasit', 'cizgili', 'kareli', 'puantiyeli', 'cicekli'];
+    var aktifRenkler = [];
+    
+    renkler.forEach(function(renk) {
+        var durum = localStorage.getItem(getAdminKey('renk_' + renk));
+        if (durum === 'eklendi') {
+            aktifRenkler.push(renk);
+        }
+    });
+    
+    localStorage.setItem(getAdminKey('aktif_renkler'), JSON.stringify(aktifRenkler));
+    console.log('✅ Aktif renkler güncellendi (Admin-3):', aktifRenkler);
+    
+    // Firebase'e de kaydet (telefon senkronizasyonu için)
+    kaydetAktifSeceneklereFirebase();
 }
 
 function toggleBeden(bedenAdi) {
@@ -2372,6 +2394,9 @@ function toggleBeden(bedenAdi) {
         localStorage.setItem(getAdminKey('beden_' + bedenAdi), 'eklendi');
     }
     
+    // Aktif bedenleri güncelle ve localStorage'a kaydet
+    updateAktifBedenler();
+    
     // Tüm dropdown'ları güncelle
     updateAllDropdowns();
     
@@ -2380,6 +2405,47 @@ function toggleBeden(bedenAdi) {
         var data = {};
         data['beden_' + bedenAdi] = currentState === 'eklendi' ? 'eklenmedi' : 'eklendi';
         database.ref(SITE_ID + '/urunAyarlari/urun3/renkBedenDurumlari').update(data);
+    }
+}
+
+// Aktif bedenleri hesapla ve localStorage + Firebase'e kaydet
+function updateAktifBedenler() {
+    var bedenler = ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', 'xs-dar', 's-kucuk', 'm-orta', 'l-buyuk', 'xl-cok', 'xxl-ekstra', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '0-3ay', '3-6ay', '6-9ay', '9-12ay', '12-18ay', '18-24ay', '2-3yas', '3-4yas', '4-5yas', 'cocuk-xs', 'cocuk-s', 'cocuk-m', 'cocuk-l', 'cocuk-xl', 'k-34', 'k-36', 'k-38', 'k-40', 'k-42', 'k-44', 'e-46', 'e-48', 'e-50', 'e-52', 'e-54', 'e-56'];
+    var aktifBedenler = [];
+    
+    bedenler.forEach(function(beden) {
+        var durum = localStorage.getItem(getAdminKey('beden_' + beden));
+        if (durum === 'eklendi') {
+            aktifBedenler.push(beden);
+        }
+    });
+    
+    localStorage.setItem(getAdminKey('aktif_bedenler'), JSON.stringify(aktifBedenler));
+    console.log('✅ Aktif bedenler güncellendi (Admin-3):', aktifBedenler);
+    
+    // Firebase'e de kaydet (telefon senkronizasyonu için)
+    kaydetAktifSeceneklereFirebase();
+}
+
+// Aktif renk ve bedenleri Firebase'e kaydet (telefon senkronizasyonu için)
+function kaydetAktifSeceneklereFirebase() {
+    if (typeof database !== 'undefined' && database) {
+        var aktifRenkler = JSON.parse(localStorage.getItem(getAdminKey('aktif_renkler')) || '[]');
+        var aktifBedenler = JSON.parse(localStorage.getItem(getAdminKey('aktif_bedenler')) || '[]');
+        
+        var data = {
+            aktif_renkler: aktifRenkler,
+            aktif_bedenler: aktifBedenler,
+            timestamp: Date.now()
+        };
+        
+        database.ref(SITE_ID + '/urunAyarlari/urun3/aktifSecenekler').set(data, function(error) {
+            if (error) {
+                console.log('❌ Firebase kayıt hatası (Admin-3):', error);
+            } else {
+                console.log('🔥 Aktif seçenekler Firebase\'e kaydedildi (Admin-3):', data);
+            }
+        });
     }
 }
 
@@ -3087,6 +3153,13 @@ window.addEventListener('DOMContentLoaded', function() {
     setTimeout(loadUrunDurumlari, 100);
     loadGenelUrunAdi(); // Genel ürün adını yükle
     loadSeoAciklamasi(); // SEO açıklamasını yükle
+    
+    // Sayfa yüklendiğinde aktif renk/beden listesini oluştur
+    setTimeout(function() {
+        console.log('⏰ updateAktifRenkler ve updateAktifBedenler çağrılıyor (Admin-3)...');
+        updateAktifRenkler();
+        updateAktifBedenler();
+    }, 200);
 });
 
 // GENEL ÜRÜN ADI FONKSİYONLARI
