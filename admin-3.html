@@ -217,10 +217,10 @@ function updateBannerFromText(type) {
     
     document.write('<div style="width:100%;max-width:768px;margin:0 auto;">');
     document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;">');
-    document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 45s linear infinite;animation-delay:-10s;will-change:transform;transform:translateZ(0);">');
+    document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 30s linear infinite;animation-delay:-5s;will-change:transform;transform:translateZ(0);">');
     
-    // Yazıları 6 kez tekrarla (kayan efekt için - yanıp sönmeyi önler)
-    for (var j = 0; j < 6; j++) {
+    // Yazıları 2 kez tekrarla (hafif ve hızlı)
+    for (var j = 0; j < 2; j++) {
         for (var i = 0; i < texts.length; i++) {
             document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">' + texts[i] + '</span>');
         }
