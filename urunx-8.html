@@ -1095,8 +1095,10 @@ function loadSavedImages() {
     
     // Firebase'den HER ZAMAN yükle (telefon senkronizasyonu için)
     if (typeof database !== 'undefined' && database) {
+        console.log('✅ Firebase hazır, görseller yükleniyor...');
         database.ref(SITE_ID + '/urunAyarlari/urun8/gorseller').once('value', function(snapshot) {
             var gorseller = snapshot.val() || {};
+            console.log('📦 Firebase\'den gelen veri:', gorseller);
             var updated = false;
             for (var i = 1; i <= 15; i++) {
                 // Firebase'de varsa HER ZAMAN yükle
@@ -1121,7 +1123,43 @@ function loadSavedImages() {
                 console.log('🔄 Bottom image Firebase\'den yüklendi');
                 updated = true;
             }
+            if (!updated) {
+                console.warn('⚠️ Firebase\'de görsel bulunamadı!');
+            }
+        }).catch(function(error) {
+            console.error('❌ Firebase okuma hatası:', error);
         });
+    } else if (typeof onFirebaseReady === 'function') {
+        console.log('⏳ Firebase henüz hazır değil, bekleniyor...');
+        onFirebaseReady(function(db) {
+            console.log('✅ Firebase hazır oldu (gecikme), görseller yükleniyor...');
+            db.ref(SITE_ID + '/urunAyarlari/urun8/gorseller').once('value', function(snapshot) {
+                var gorseller = snapshot.val() || {};
+                console.log('📦 Firebase\'den gelen veri (gecikme):', gorseller);
+                for (var i = 1; i <= 15; i++) {
+                    if (gorseller['topImg' + i]) {
+                        localStorage.setItem(pageId + '_topImg' + i, gorseller['topImg' + i]);
+                        var gorselUrl = gorseller['topImg' + i];
+                        if (gorselUrl.startsWith('http')) {
+                            var separator = gorselUrl.indexOf('?') > -1 ? '&' : '?';
+                            document.getElementById('topImage' + i).src = gorselUrl + separator + 'v=' + Date.now();
+                        } else {
+                            document.getElementById('topImage' + i).src = gorselUrl;
+                        }
+                        console.log('🔄 Görsel ' + i + ' Firebase\'den yüklendi (gecikme)');
+                    }
+                }
+                if (gorseller['bottomImg1']) {
+                    localStorage.setItem(pageId + '_bottomImg1', gorseller['bottomImg1']);
+                    document.getElementById('bottomImage').src = gorseller['bottomImg1'];
+                    console.log('🔄 Bottom image Firebase\'den yüklendi (gecikme)');
+                }
+            }).catch(function(error) {
+                console.error('❌ Firebase okuma hatası (gecikme):', error);
+            });
+        });
+    } else {
+        console.error('❌ Firebase yüklenemedi!');
     }
 }
 
