@@ -1093,16 +1093,14 @@ function loadSavedImages() {
         console.log('✅ Bottom image yüklendi');
     }
     
-    // Arka planda Firebase'den de kontrol et (güncellemeler için)
-    // localStorage'da veri YOKSA veya BOŞ İSE Firebase'den yükle
+    // Firebase'den HER ZAMAN yükle (telefon senkronizasyonu için)
     if (typeof database !== 'undefined' && database) {
         database.ref(SITE_ID + '/urunAyarlari/urun9/gorseller').once('value', function(snapshot) {
             var gorseller = snapshot.val() || {};
             var updated = false;
             for (var i = 1; i <= 15; i++) {
-                var saved = localStorage.getItem(pageId + '_topImg' + i);
-                // localStorage'da veri YOKSA veya BOŞ İSE (0 KB) Firebase'den yükle
-                if ((!saved || saved.length < 100) && gorseller['topImg' + i]) {
+                // Firebase'de varsa HER ZAMAN yükle
+                if (gorseller['topImg' + i]) {
                     localStorage.setItem(pageId + '_topImg' + i, gorseller['topImg' + i]);
                     var gorselUrl = gorseller['topImg' + i];
                     // URL ise cache bypass için timestamp ekle
@@ -1112,16 +1110,15 @@ function loadSavedImages() {
                     } else {
                         document.getElementById('topImage' + i).src = gorselUrl;
                     }
-                    console.log('🔄 Görsel ' + i + ' Firebase\'den güncellendi');
+                    console.log('🔄 Görsel ' + i + ' Firebase\'den yüklendi');
                     updated = true;
                 }
             }
-            var bottomSaved = localStorage.getItem(pageId + '_bottomImg1');
-            // localStorage'da veri YOKSA veya BOŞ İSE Firebase'den yükle
-            if ((!bottomSaved || bottomSaved.length < 100) && gorseller['bottomImg1']) {
+            // Bottom image için de aynı mantık
+            if (gorseller['bottomImg1']) {
                 localStorage.setItem(pageId + '_bottomImg1', gorseller['bottomImg1']);
                 document.getElementById('bottomImage').src = gorseller['bottomImg1'];
-                console.log('🔄 Bottom image Firebase\'den güncellendi');
+                console.log('🔄 Bottom image Firebase\'den yüklendi');
                 updated = true;
             }
         });
