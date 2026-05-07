@@ -214,7 +214,7 @@ function updateBannerFromText(type) {
     
     document.write('<div style="width:100%;max-width:768px;margin:0 auto;">');
     document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;">');
-    document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 90s linear infinite;">');
+    document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 45s linear infinite;">');
     document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">🚚 AYNI GÜN KARGO</span>');
     document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">💳 KAPIDA ÖDEME</span>');
     document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">📦 HIZLI TESLİMAT</span>');
@@ -3505,10 +3505,30 @@ function updateAdminBannerDisplay(bgColor, textColor, texts) {
     }
 }
 
+function loadAdminBannerSettings() {
+    // Admin sayfası için banner ayarlarını yükle
+    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
+    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
+    
+    // Color picker'ları güncelle
+    var bgColorInput = document.getElementById('bannerBgColor');
+    var textColorInput = document.getElementById('bannerTextColor');
+    var bgColorTextInput = document.getElementById('bannerBgColorText');
+    var textColorTextInput = document.getElementById('bannerTextColorText');
+    
+    if (bgColorInput) bgColorInput.value = bgColor;
+    if (textColorInput) textColorInput.value = textColor;
+    if (bgColorTextInput) bgColorTextInput.value = bgColor;
+    if (textColorTextInput) textColorTextInput.value = textColor;
+    
+    console.log('✅ Admin-4 banner renkleri yüklendi:', {bgColor, textColor});
+}
+
 // Sayfa yüklendiğinde banner ayarlarını yükle
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
         loadBannerSettings();
+        loadAdminBannerSettings();
     }, 100);
 });
 </script>

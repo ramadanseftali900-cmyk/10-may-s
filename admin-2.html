@@ -210,7 +210,7 @@ function updateBannerFromText(type) {
     
     document.write('<div style="width:100%;max-width:768px;margin:0 auto;">');
     document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;">');
-    document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 90s linear infinite;">');
+    document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 45s linear infinite;">');
     document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">🚚 AYNI GÜN KARGO</span>');
     document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">💳 KAPIDA ÖDEME</span>');
     document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">📦 HIZLI TESLİMAT</span>');
@@ -340,6 +340,24 @@ function updateBannerFromText(type) {
 <h3 style="color:#e94560;font-weight:900;margin-bottom:15px;margin-top:30px;border-bottom:2px solid #e94560;padding-bottom:10px;">📢 KAYAN YAZI ŞERİDİ</h3>
 
 <div style="margin-bottom:15px;">
+  <div style="margin-bottom:10px;">
+    <label style="display:block;font-weight:bold;margin-bottom:5px;color:#000;">Arkaplan Rengi:</label>
+    <div style="display:flex;gap:5px;align-items:center;">
+      <input type="color" id="bannerBgColor" value="#000000" style="width:60px;height:40px;border:2px solid #ddd;border-radius:6px;cursor:pointer;box-sizing:border-box;" onchange="updateBannerFromColor('bg')">
+      <input type="text" id="bannerBgColorText" value="#000000" placeholder="#000000" style="flex:1;height:40px;border:2px solid #ddd;border-radius:6px;padding:0 10px;font-size:14px;font-family:monospace;box-sizing:border-box;" onchange="updateBannerFromText('bg')" onkeyup="updateBannerFromText('bg')" onpaste="setTimeout(function(){updateBannerFromText('bg')}, 10)">
+    </div>
+  </div>
+  <div style="margin-bottom:10px;">
+    <label style="display:block;font-weight:bold;margin-bottom:5px;color:#000;">Yazı Rengi:</label>
+    <div style="display:flex;gap:5px;align-items:center;">
+      <input type="color" id="bannerTextColor" value="#ffffff" style="width:60px;height:40px;border:2px solid #ddd;border-radius:6px;cursor:pointer;box-sizing:border-box;" onchange="updateBannerFromColor('text')">
+      <input type="text" id="bannerTextColorText" value="#ffffff" placeholder="#ffffff" style="flex:1;height:40px;border:2px solid #ddd;border-radius:6px;padding:0 10px;font-size:14px;font-family:monospace;box-sizing:border-box;" onchange="updateBannerFromText('text')" onkeyup="updateBannerFromText('text')" onpaste="setTimeout(function(){updateBannerFromText('text')}, 10)">
+    </div>
+  </div>
+</div>
+
+<div style="margin-bottom:15px;padding:15px;background:#f8f9fa;border-radius:8px;border:2px solid #ddd;">
+  <h4 style="margin:0 0 10px 0;color:#333;font-size:14px;">🎨 Şerit Renkleri:</h4>
   <div style="margin-bottom:10px;">
     <label style="display:block;font-weight:bold;margin-bottom:5px;color:#000;">Arkaplan Rengi:</label>
     <div style="display:flex;gap:5px;align-items:center;">
@@ -3596,10 +3614,30 @@ function updateSiparisSeridiFromText(type) {
     }
 }
 
+function loadAdminBannerSettings() {
+    // Admin sayfası için banner ayarlarını yükle
+    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
+    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
+    
+    // Color picker'ları güncelle
+    var bgColorInput = document.getElementById('bannerBgColor');
+    var textColorInput = document.getElementById('bannerTextColor');
+    var bgColorTextInput = document.getElementById('bannerBgColorText');
+    var textColorTextInput = document.getElementById('bannerTextColorText');
+    
+    if (bgColorInput) bgColorInput.value = bgColor;
+    if (textColorInput) textColorInput.value = textColor;
+    if (bgColorTextInput) bgColorTextInput.value = bgColor;
+    if (textColorTextInput) textColorTextInput.value = textColor;
+    
+    console.log('✅ Admin-2 banner renkleri yüklendi:', {bgColor, textColor});
+}
+
 // Sayfa yüklenince ayarları yükle
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
         loadBannerSettings();
+        loadAdminBannerSettings();
         loadSiparisSeridiSettings();
     }, 500);
 });
