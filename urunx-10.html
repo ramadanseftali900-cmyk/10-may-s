@@ -198,24 +198,21 @@ function getAdminKey(key) {
 <div class="urunPage">
 <div style="width:100%;max-width:768px;margin:0 auto;">
 
-<!-- KAYAN YAZI ŞERİDİ - ADMİN-10'TEN DİNAMİK -->
+<!-- KAYAN YAZI ŞERİDİ -->
 <script>
-// Admin-10'ten kayan yazı ayarlarını oku ve dinamik olarak oluştur
+// Banner renklerini HEMEN al ve HTML'i oluştur
 (function() {
     function getAdminKey(key) { 
         var siteId = 'www_emenkargon_online';
-        localStorage.setItem('__SITE_ID__', siteId);
         return siteId + '_admin10_' + key; 
     }
     
-    // localStorage'dan renkleri al
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color'));
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color'));
+    // Banner'ı başlangıçta gizli yap - Firebase'den gelince görünür olacak
+    var bgColor = '#000000';
+    var textColor = '#ffffff';
+    var visibility = 'hidden';
     
-    // Eğer localStorage'da renk varsa kullan, yoksa gizle (Firebase'den gelecek)
-    var visibility = (bgColor && textColor) ? 'visible' : 'hidden';
-    if (!bgColor) bgColor = '#000000';
-    if (!textColor) textColor = '#ffffff';
+    console.log('🎨 HTML direkt yazıldı (urunx-10) - Banner gizli, Firebase\'den gelecek');
     
     document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;visibility:' + visibility + ';">');
     document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 20s linear infinite;">');
@@ -233,60 +230,6 @@ function getAdminKey(key) {
     document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">✅ ÜCRETSİZ KARGO</span>');
     document.write('</div>');
     document.write('</div>');
-})();
-</script>
-
-<!-- ANLIK GÜNCELLEMELERİ DİNLE -->
-<script>
-// Admin-10'teki değişiklikleri anlık olarak dinle ve uygula
-(function() {
-    function getAdminKey(key) { 
-        var siteId = 'www_emenkargon_online';
-        return siteId + '_admin10_' + key; 
-    }
-    
-    // 🔥 Firebase'den banner renklerini yükle (Admin-10'dan) - GERÇEK ZAMANLI SENKRONIZASYON
-    onFirebaseReady(function(db) {
-        console.log('🔥 Firebase hazır, banner renkleri yükleniyor (urunx-10)...');
-        
-        db.ref('www_emenkargon_online/admin10/bannerColors').on('value', function(snapshot) {
-            var data = snapshot.val();
-            var bgColor = '#000000';
-            var textColor = '#ffffff';
-            
-            if (data) {
-                bgColor = data.bgColor || '#000000';
-                textColor = data.textColor || '#ffffff';
-                console.log('🔥 Firebase\'den yüklendi (urunx-10) - BG:', bgColor, 'Text:', textColor);
-                
-                // localStorage'a kaydet
-                localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
-                localStorage.setItem(getAdminKey('banner_text_color'), textColor);
-            } else {
-                console.log('⚠️ Firebase\'de banner rengi yok (urunx-10)');
-            }
-            
-            // Banner şeridini güncelle
-            var bannerStrip = document.getElementById('bannerStrip');
-            var bannerContent = document.getElementById('bannerContent');
-            
-            if (bannerStrip && bannerContent) {
-                // Arkaplan rengini güncelle
-                bannerStrip.style.background = bgColor;
-                
-                // 🔥 Şeridi görünür yap (Firebase'den renk geldi)
-                bannerStrip.style.visibility = 'visible';
-                
-                // Yazı renklerini güncelle
-                var spans = bannerContent.querySelectorAll('span');
-                spans.forEach(function(span) {
-                    span.style.color = textColor;
-                });
-                
-                console.log('✅ Banner güncellendi (urunx-10)');
-            }
-        });
-    });
 })();
 </script>
 <style>
@@ -418,6 +361,80 @@ setTimeout(function() {
     herSeyiGoster();
   }
 }, 1500);
+
+// =============================================
+// KAYAN YAZI ŞERİDİ YÖNETİMİ
+// =============================================
+
+function loadBannerSettings() {
+    console.log('🚀 loadBannerSettings çağrıldı (urunx-10)');
+    
+    // 🔥 Firebase'den banner renklerini yükle (Admin-10'dan) - SÜREKLİ DİNLE
+    onFirebaseReady(function(db) {
+        console.log('🔥 Firebase hazır, banner renkleri yükleniyor (urunx-10)...');
+        
+        db.ref('www_emenkargon_online/admin10/bannerColors').on('value', function(snapshot) {
+            var data = snapshot.val();
+            var bgColor = '#000000';
+            var textColor = '#ffffff';
+            
+            if (data) {
+                bgColor = data.bgColor || '#000000';
+                textColor = data.textColor || '#ffffff';
+                console.log('🔥 Firebase\'den yüklendi (urunx-10) - BG:', bgColor, 'Text:', textColor);
+                
+                // localStorage'a kaydet
+                localStorage.setItem('www_emenkargon_online_admin10_banner_bg_color', bgColor);
+                localStorage.setItem('www_emenkargon_online_admin10_banner_text_color', textColor);
+            } else {
+                console.log('⚠️ Firebase\'de banner rengi yok (urunx-10)');
+            }
+            
+            // Banner şeridini güncelle
+            updateBannerDisplay(bgColor, textColor);
+        });
+    });
+}
+
+function updateBannerDisplay(bgColor, textColor) {
+    var bannerStrip = document.getElementById('bannerStrip');
+    var bannerContent = document.getElementById('bannerContent');
+    
+    if (bannerStrip && bannerContent) {
+        // Arkaplan rengini güncelle
+        bannerStrip.style.background = bgColor;
+        
+        // 🔥 Şeridi görünür yap (Firebase'den renk geldi)
+        bannerStrip.style.visibility = 'visible';
+        
+        // SABİT METİNLERİ KULLAN
+        var fixedTexts = [
+            '🚚 AYNI GÜN KARGO',
+            '💳 KAPIDA ÖDEME', 
+            '📦 HIZLI TESLİMAT',
+            '🔒 GÜVENLİ ALIŞVERİŞ',
+            '⭐ %100 MÜŞTERİ MEMNUNİYETİ',
+            '✅ ÜCRETSİZ KARGO'
+        ];
+        
+        // İçeriği oluştur (2 kez tekrarla ki kesintisiz dönsün)
+        var htmlContent = '';
+        for (var i = 0; i < 2; i++) {
+            fixedTexts.forEach(function(text) {
+                htmlContent += '<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">' + text + '</span>';
+            });
+        }
+        
+        bannerContent.innerHTML = htmlContent;
+        
+        console.log('✅ Kayan yazı şeridi güncellendi (sabit metinlerle)');
+    }
+}
+
+// Sayfa yüklenince banner ayarlarını yükle
+document.addEventListener('DOMContentLoaded', function() {
+    loadBannerSettings();
+});
 </script>
 <div class="formWrapper" style="position:relative;">
 
