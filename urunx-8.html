@@ -1689,27 +1689,23 @@ function gorselleriYukle() {
   if (!bottomSaved) bottomSaved = localStorage.getItem('sayfa1_bottomImg1_url');
   if(bottomImg && bottomSaved) bottomImg.src = bottomSaved;
   
-  // Firebase'den güncel görselleri çek ve localStorage'ı güncelle
+  // Firebase'den HER ZAMAN yükle (telefon senkronizasyonu için)
   if (typeof database !== 'undefined' && database) {
     database.ref(SITE_ID + '/urunAyarlari/urun8/gorseller').once('value', function(snapshot) {
       var gorseller = snapshot.val() || {};
       for(var i = 1; i <= 15; i++) {
         var img = document.getElementById('topImage' + i);
-        if(img) {
-          if(gorseller['topImg' + i]) {
-            img.src = gorseller['topImg' + i];
-            localStorage.setItem(pageId + '_topImg' + i, gorseller['topImg' + i]);
-          }
-          // Firebase'de yoksa localStorage'dakini koru (silme!)
+        if(img && gorseller['topImg' + i]) {
+          img.src = gorseller['topImg' + i];
+          localStorage.setItem(pageId + '_topImg' + i, gorseller['topImg' + i]);
+          console.log('🔄 Görsel ' + i + ' Firebase\'den yüklendi');
         }
       }
       var bottomImg = document.getElementById('bottomImage');
-      if(bottomImg) {
-        if(gorseller['bottomImg1']) {
-          bottomImg.src = gorseller['bottomImg1'];
-          localStorage.setItem(pageId + '_bottomImg1', gorseller['bottomImg1']);
-        }
-        // Firebase'de yoksa localStorage'dakini koru (silme!)
+      if(bottomImg && gorseller['bottomImg1']) {
+        bottomImg.src = gorseller['bottomImg1'];
+        localStorage.setItem(pageId + '_bottomImg1', gorseller['bottomImg1']);
+        console.log('🔄 Bottom image Firebase\'den yüklendi');
       }
       console.log('✅ Görseller Firebase\'den güncellendi');
     });
@@ -1719,21 +1715,17 @@ function gorselleriYukle() {
         var gorseller = snapshot.val() || {};
         for(var i = 1; i <= 15; i++) {
           var img = document.getElementById('topImage' + i);
-          if(img) {
-            if(gorseller['topImg' + i]) {
-              img.src = gorseller['topImg' + i];
-              localStorage.setItem(pageId + '_topImg' + i, gorseller['topImg' + i]);
-            }
-            // Firebase'de yoksa localStorage'dakini koru (silme!)
+          if(img && gorseller['topImg' + i]) {
+            img.src = gorseller['topImg' + i];
+            localStorage.setItem(pageId + '_topImg' + i, gorseller['topImg' + i]);
+            console.log('🔄 Görsel ' + i + ' Firebase\'den yüklendi (gecikme)');
           }
         }
         var bottomImg = document.getElementById('bottomImage');
-        if(bottomImg) {
-          if(gorseller['bottomImg1']) {
-            bottomImg.src = gorseller['bottomImg1'];
-            localStorage.setItem(pageId + '_bottomImg1', gorseller['bottomImg1']);
-          }
-          // Firebase'de yoksa localStorage'dakini koru (silme!)
+        if(bottomImg && gorseller['bottomImg1']) {
+          bottomImg.src = gorseller['bottomImg1'];
+          localStorage.setItem(pageId + '_bottomImg1', gorseller['bottomImg1']);
+          console.log('🔄 Bottom image Firebase\'den yüklendi (gecikme)');
         }
         console.log('✅ Görseller Firebase\'den güncellendi (gecikme)');
       });
