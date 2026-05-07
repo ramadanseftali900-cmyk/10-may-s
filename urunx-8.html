@@ -2329,8 +2329,8 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             console.log('🔥 Firebase hazır - Admin-8 renk dinleyicisi başlatılıyor...');
             
-            // Renk verilerini dinle (tüm cihazlar için ortak)
-            db.ref('www_emenkargon_online/siparisSeridiColors').on('value', function(snapshot) {
+            // Renk verilerini dinle - ADMIN-8'DEN OKU
+            db.ref('www_emenkargon_online/admin8/siparisSeridiColors').on('value', function(snapshot) {
                 var data = snapshot.val();
                 if (data && data.bgColor && data.textColor) {
                     console.log('🔥 Firebase\'den renk değişikliği geldi:', data);

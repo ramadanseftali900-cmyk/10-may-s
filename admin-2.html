@@ -3387,7 +3387,7 @@ function updateSiparisSeridiSettings() {
     // Hızlı sipariş şeridini güncelle
     updateSiparisSeridiDisplay(bgColor, textColor);
     
-    // 🔥 Firebase'e kaydet (tüm cihazlarda görünsün)
+    // 🔥 Firebase'e kaydet (ADMIN-2'YE ÖZEL YOL)
     onFirebaseReady(function(db) {
         try {
             var colorData = {
@@ -3396,17 +3396,14 @@ function updateSiparisSeridiSettings() {
                 timestamp: Date.now()
             };
             
-            // Renkleri Firebase'e kaydet
-            db.ref('www_emenkargon_online/siparisSeridiColors').set(colorData).then(function() {
-                console.log('🔥 Firebase\'e kaydedildi - Tüm cihazlarda görünecek:', colorData);
-                alert('✅ Renkler kaydedildi! Tüm cihazlarda görünecek.');
+            // Renkleri Firebase'e kaydet - ADMIN-2'YE ÖZEL
+            db.ref('www_emenkargon_online/admin2/siparisSeridiColors').set(colorData).then(function() {
+                console.log('🔥 Firebase\'e kaydedildi (admin2/siparisSeridiColors):', colorData);
             }).catch(function(error) {
                 console.error('❌ Firebase kayıt hatası:', error);
-                alert('❌ Kayıt hatası: ' + error.message);
             });
         } catch(e) {
             console.error('❌ Firebase işlem hatası:', e);
-            alert('❌ Hata: ' + e.message);
         }
     });
     
@@ -3429,9 +3426,9 @@ function updateSiparisSeridiDisplay(bgColor, textColor) {
 }
 
 function loadSiparisSeridiSettings() {
-    // 🔥 Firebase'den renkleri yükle
+    // 🔥 Firebase'den renkleri yükle - ADMIN-2'YE ÖZEL YOL
     onFirebaseReady(function(db) {
-        db.ref('www_emenkargon_online/siparisSeridiColors').once('value').then(function(snapshot) {
+        db.ref('www_emenkargon_online/admin2/siparisSeridiColors').once('value').then(function(snapshot) {
             var data = snapshot.val();
             var bgColor = '#4A90E2';
             var textColor = '#ffffff';
@@ -3439,9 +3436,9 @@ function loadSiparisSeridiSettings() {
             if (data) {
                 bgColor = data.bgColor || '#4A90E2';
                 textColor = data.textColor || '#ffffff';
-                console.log('🔥 Firebase\'den yüklendi:', data);
+                console.log('🔥 Firebase\'den yüklendi (admin2):', data);
             } else {
-                console.log('⚠️ Firebase\'de renk yok, varsayılan kullanılıyor');
+                console.log('⚠️ Firebase\'de renk yok (admin2), varsayılan kullanılıyor');
             }
             
             // Form alanlarını güncelle
@@ -3521,3 +3518,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+<!--  -->

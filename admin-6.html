@@ -3577,10 +3577,9 @@ function updateSiparisSeridiSettings() {
                 timestamp: Date.now()
             };
             
-            // Renkleri Firebase'e kaydet
-            db.ref('www_emenkargon_online/siparisSeridiColors').set(colorData).then(function() {
-                console.log('🔥 Firebase\'e kaydedildi - Tüm cihazlarda görünecek:', colorData);
-                alert('✅ Renkler kaydedildi! Tüm cihazlarda görünecek.');
+            // Renkleri Firebase'e kaydet - ADMIN-6'YA ÖZEL
+            db.ref('www_emenkargon_online/admin6/siparisSeridiColors').set(colorData).then(function() {
+                console.log('🔥 Firebase\'e kaydedildi (admin6/siparisSeridiColors):', colorData);
             }).catch(function(error) {
                 console.error('❌ Firebase kayıt hatası:', error);
                 alert('❌ Kayıt hatası: ' + error.message);
@@ -3610,9 +3609,9 @@ function updateSiparisSeridiDisplay(bgColor, textColor) {
 }
 
 function loadSiparisSeridiSettings() {
-    // 🔥 Firebase'den renkleri yükle
+    // 🔥 Firebase'den renkleri yükle - ADMIN-6'YA ÖZEL YOL
     onFirebaseReady(function(db) {
-        db.ref('www_emenkargon_online/siparisSeridiColors').once('value').then(function(snapshot) {
+        db.ref('www_emenkargon_online/admin6/siparisSeridiColors').once('value').then(function(snapshot) {
             var data = snapshot.val();
             var bgColor = '#4A90E2';
             var textColor = '#ffffff';
