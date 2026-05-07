@@ -3184,7 +3184,7 @@ function updateSiparisSeridiSettings() {
     var textColor = document.getElementById('siparisSeridiTextColor').value || '#ffffff';
     
     // DEBUG: Konsola yazdır
-    console.log('💾 KAYDET - Hızlı Sipariş Şeridi (Admin-10):');
+    console.log('💾 KAYDET - Hızlı Sipariş Şeridi (Admin-9):');
     console.log('BG Color Value:', bgColor);
     console.log('Text Color Value:', textColor);
     
@@ -3200,9 +3200,9 @@ function updateSiparisSeridiSettings() {
                 timestamp: Date.now()
             };
             
-            // Renkleri Firebase'e kaydet - ADMIN-10'A ÖZEL
+            // Renkleri Firebase'e kaydet - ADMIN-9'A ÖZEL
             db.ref('www_emenkargon_online/admin9/siparisSeridiColors').set(colorData).then(function() {
-                console.log('🔥 Firebase\'e kaydedildi (admin10/siparisSeridiColors):', colorData);
+                console.log('🔥 Firebase\'e kaydedildi (admin9/siparisSeridiColors):', colorData);
             }).catch(function(error) {
                 console.error('❌ Firebase kayıt hatası:', error);
                 alert('❌ Kayıt hatası: ' + error.message);
@@ -3213,7 +3213,7 @@ function updateSiparisSeridiSettings() {
         }
     });
     
-    console.log('✅ Hızlı sipariş şeridi ayarları kaydedildi (Admin-10)');
+    console.log('✅ Hızlı sipariş şeridi ayarları kaydedildi (Admin-9)');
 }
 
 function updateSiparisSeridiDisplay(bgColor, textColor) {
@@ -3232,7 +3232,7 @@ function updateSiparisSeridiDisplay(bgColor, textColor) {
 }
 
 function loadSiparisSeridiSettings() {
-    // 🔥 Firebase'den renkleri yükle - ADMIN-10'A ÖZEL YOL
+    // 🔥 Firebase'den renkleri yükle - ADMIN-9'A ÖZEL YOL
     onFirebaseReady(function(db) {
         db.ref('www_emenkargon_online/admin9/siparisSeridiColors').once('value').then(function(snapshot) {
             var data = snapshot.val();
@@ -3261,7 +3261,7 @@ function loadSiparisSeridiSettings() {
             // Hızlı sipariş şeridini güncelle
             updateSiparisSeridiDisplay(bgColor, textColor);
             
-            console.log('✅ Hızlı sipariş şeridi ayarları yüklendi (Admin-10):', bgColor, textColor);
+            console.log('✅ Hızlı sipariş şeridi ayarları yüklendi (Admin-9):', bgColor, textColor);
         }).catch(function(error) {
             console.error('❌ Firebase okuma hatası:', error);
         });
