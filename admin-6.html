@@ -252,7 +252,7 @@ function updateBannerFromText(type) {
 
 <!-- YAN ÇEKMECE (SOL ADMİN PANELİ) -->
 <div id="leftDrawer" class="open">
-<div class="leftDrawerHeader">ADMİN 10</div>
+<div class="leftDrawerHeader">ADMİN 6</div>
 <div class="leftDrawerContent">
 
 <!-- GENEL ÜRÜN ADI -->
@@ -897,14 +897,14 @@ function updateBannerFromText(type) {
 <!-- HIZLI SİPARİŞ FORMU ÇUBUĞU -->
 <script>
 // HEMEN HTML'e yaz - hiç beklemeden
-var bgColor = localStorage.getItem('www_emenkargon_online_admin10_siparis_seridi_bg_color') || '#4A90E2';
-var textColor = localStorage.getItem('www_emenkargon_online_admin10_siparis_seridi_text_color') || '#ffffff';
+var bgColor = localStorage.getItem('www_emenkargon_online_admin6_siparis_seridi_bg_color') || '#4A90E2';
+var textColor = localStorage.getItem('www_emenkargon_online_admin6_siparis_seridi_text_color') || '#ffffff';
 
 document.write('<div id="siparisSeridi" style="width:100%;background:' + bgColor + ';padding:10px 0;text-align:center;border-radius:8px 8px 0 0;margin-bottom:10px;">');
 document.write('<span id="siparisSeridiText" style="color:' + textColor + ';font-size:20px;font-weight:900;letter-spacing:2px;display:inline-block;animation:buyukKucul 0.8s ease-in-out infinite;">📋 HIZLI SİPARİŞ FORMU</span>');
 document.write('</div>');
 
-console.log('🎨 HTML direkt yazıldı (admin-10) - BG:', bgColor, 'Text:', textColor);
+console.log('🎨 HTML direkt yazıldı (admin-6) - BG:', bgColor, 'Text:', textColor);
 </script>
 <label class="formLabel" style="margin-top:0">Ödeme Yöntemi:</label>
 <div class="radioBox" style="border:2px solid #000 !important;box-shadow:inset 0 0 0 1px #000 !important;">
@@ -1794,7 +1794,7 @@ function loadImageFromUrl(imgId) {
     if (typeof database !== 'undefined' && database) {
         var gorselData = {};
         gorselData[imgId] = url;
-        database.ref(SITE_ID + '/urunAyarlari/urun10/gorseller').update(gorselData).then(function() {
+        database.ref(SITE_ID + '/urunAyarlari/urun6/gorseller').update(gorselData).then(function() {
             console.log('✅ URL Firebase\'e kaydedildi: ' + imgId);
         }).catch(function(error) {
             console.error('❌ Firebase kayıt hatası:', error);
@@ -1805,7 +1805,7 @@ function loadImageFromUrl(imgId) {
         onFirebaseReady(function(db) {
             var gorselData = {};
             gorselData[savedImgId2] = savedUrl2;
-            db.ref(SITE_ID + '/urunAyarlari/urun10/gorseller').update(gorselData);
+            db.ref(SITE_ID + '/urunAyarlari/urun6/gorseller').update(gorselData);
         });
     }
 }
@@ -2300,7 +2300,7 @@ function toggleRenk(renkAdi) {
     if (typeof database !== 'undefined' && database) {
         var data = {};
         data['renk_' + renkAdi] = currentState === 'eklendi' ? 'eklenmedi' : 'eklendi';
-        database.ref(SITE_ID + '/urunAyarlari/urun10/renkBedenDurumlari').update(data);
+        database.ref(SITE_ID + '/urunAyarlari/urun6/renkBedenDurumlari').update(data);
     }
 }
 
@@ -2341,7 +2341,7 @@ function toggleBeden(bedenAdi) {
     if (typeof database !== 'undefined' && database) {
         var data = {};
         data['beden_' + bedenAdi] = currentState === 'eklendi' ? 'eklenmedi' : 'eklendi';
-        database.ref(SITE_ID + '/urunAyarlari/urun10/renkBedenDurumlari').update(data);
+        database.ref(SITE_ID + '/urunAyarlari/urun6/renkBedenDurumlari').update(data);
     }
 }
 
@@ -3103,7 +3103,7 @@ function loadSeoAciklamasi() {
 
 <script>
 // =============================================
-// HIZLI SİPARİŞ ŞERİDİ YÖNETİMİ - ADMİN 10
+// HIZLI SİPARİŞ ŞERİDİ YÖNETİMİ - ADMİN 6
 // =============================================
 
 function updateSiparisSeridiSettings() {
@@ -3243,7 +3243,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script>
 // =============================================
-// KAYAN YAZI ŞERİDİ YÖNETİMİ - ADMİN 10
+// KAYAN YAZI ŞERİDİ YÖNETİMİ - ADMİN 6
 // =============================================
 
 // Banner ayarlarını yükle
