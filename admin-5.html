@@ -105,14 +105,19 @@ var SITE_ID = 'www_emenkargon_online';
 
 // BANNER FONKSİYONLARI - GLOBAL SCOPE'DA TANIMLA
 function updateBannerFromColor(type) {
+    console.log('🎨 updateBannerFromColor çağrıldı:', type);
+    
     if (type === 'bg') {
         var colorValue = document.getElementById('bannerBgColor').value;
         document.getElementById('bannerBgColorText').value = colorValue;
+        console.log('🎨 Arkaplan rengi değişti:', colorValue);
     } else if (type === 'text') {
         var colorValue = document.getElementById('bannerTextColor').value;
         document.getElementById('bannerTextColorText').value = colorValue;
+        console.log('🎨 Yazı rengi değişti:', colorValue);
     }
     
+    // Banner'ı güncelle
     var bannerStrip = document.getElementById('bannerStrip');
     if (bannerStrip && type === 'bg') {
         bannerStrip.style.background = document.getElementById('bannerBgColor').value;
@@ -125,20 +130,22 @@ function updateBannerFromColor(type) {
         });
     }
     
+    // localStorage'a kaydet
     var bgColor = document.getElementById('bannerBgColor').value;
     var textColor = document.getElementById('bannerTextColor').value;
     localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
     localStorage.setItem(getAdminKey('banner_text_color'), textColor);
     
-    // 🔥 Firebase'e ANINDA kaydet (onFirebaseReady kullan)
-    onFirebaseReady(function(db) {
+    // 🔥 Firebase'e kaydet (telefon senkronizasyonu için)
+    if (typeof firebase !== 'undefined' && firebase.database) {
+        var db = firebase.database();
         var bannerData = {
             bgColor: bgColor,
             textColor: textColor,
             timestamp: Date.now()
         };
         db.ref('www_emenkargon_online/admin5/bannerColors').set(bannerData).then(function() {
-            console.log('🔥 Firebase\'e kaydedildi - Banner renkleri (admin-5):', bannerData);
+            console.log('🔥 Firebase\'e kaydedildi - Banner renkleri:', bannerData);
         }).catch(function(error) {
             console.error('❌ Firebase kayıt hatası:', error);
         });
@@ -3301,44 +3308,9 @@ function loadBannerSettings() {
 }
 
 // Renk seçiciden güncelle
-function updateBannerFromColor(type) {
-    if (type === 'bg') {
-        var color = document.getElementById('bannerBgColor').value;
-        document.getElementById('bannerBgColorText').value = color;
-        localStorage.setItem(getAdminKey('banner_bg_color'), color);
-    } else if (type === 'text') {
-        var color = document.getElementById('bannerTextColor').value;
-        document.getElementById('bannerTextColorText').value = color;
-        localStorage.setItem(getAdminKey('banner_text_color'), color);
-    }
-    
-    // Admin sayfasındaki banner'ı anında güncelle
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
-    updateAdminBannerDisplay(bgColor, textColor, []);
-}
-
-// Metin kutusundan güncelle
-function updateBannerFromText(type) {
-    if (type === 'bg') {
-        var color = document.getElementById('bannerBgColorText').value;
-        if (color.match(/^#[0-9A-F]{6}$/i)) {
-            document.getElementById('bannerBgColor').value = color;
-            localStorage.setItem(getAdminKey('banner_bg_color'), color);
-        }
-    } else if (type === 'text') {
-        var color = document.getElementById('bannerTextColorText').value;
-        if (color.match(/^#[0-9A-F]{6}$/i)) {
-            document.getElementById('bannerTextColor').value = color;
-            localStorage.setItem(getAdminKey('banner_text_color'), color);
-        }
-    }
-    
-    // Admin sayfasındaki banner'ı anında güncelle
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
-    updateAdminBannerDisplay(bgColor, textColor, []);
-}
+// NOT: updateBannerFromColor ve updateBannerFromText fonksiyonları 
+// sayfa başında (satır 107) global scope'da tanımlı ve Firebase'e kaydediyor
+// Burada tekrar tanımlamaya gerek yok
 
 // Banner yazısını kaydet
 function saveBannerText(index) {

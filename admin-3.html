@@ -105,12 +105,16 @@ var SITE_ID = 'www_emenkargon_online';
 
 // BANNER FONKSİYONLARI - GLOBAL SCOPE'DA TANIMLA
 function updateBannerFromColor(type) {
+    console.log('🎨 updateBannerFromColor çağrıldı (admin-3), type:', type);
+    
     if (type === 'bg') {
         var colorValue = document.getElementById('bannerBgColor').value;
         document.getElementById('bannerBgColorText').value = colorValue;
+        console.log('🎨 Arkaplan rengi:', colorValue);
     } else if (type === 'text') {
         var colorValue = document.getElementById('bannerTextColor').value;
         document.getElementById('bannerTextColorText').value = colorValue;
+        console.log('🎨 Yazı rengi:', colorValue);
     }
     
     // Admin sayfasındaki banner'ı güncelle
@@ -131,9 +135,12 @@ function updateBannerFromColor(type) {
     var textColor = document.getElementById('bannerTextColor').value;
     localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
     localStorage.setItem(getAdminKey('banner_text_color'), textColor);
+    console.log('💾 localStorage\'a kaydedildi (admin-3):', bgColor, textColor);
     
     // 🔥 Firebase'e ANINDA kaydet (onFirebaseReady kullan)
+    console.log('🔥 Firebase kayıt başlatılıyor (admin-3)...');
     onFirebaseReady(function(db) {
+        console.log('🔥 Firebase hazır, kayıt yapılıyor (admin-3)...');
         var bannerData = {
             bgColor: bgColor,
             textColor: textColor,
@@ -144,7 +151,7 @@ function updateBannerFromColor(type) {
         }).catch(function(error) {
             console.error('❌ Firebase kayıt hatası:', error);
         });
-    }
+    });
 }
 
 function updateBannerFromText(type) {
