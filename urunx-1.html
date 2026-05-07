@@ -238,9 +238,9 @@ function getAdminKey(key) {
     }
     
     // Banner'ı başlangıçta gizli yap - Firebase'den gelince görünür olacak
-    var bgColor = '#ffffff';
-    var textColor = '#000000';
-    var visibility = 'hidden';
+    var bgColor = localStorage.getItem('www_emenkargon_online_admin1_banner_bg_color') || '#ffffff';
+    var textColor = localStorage.getItem('www_emenkargon_online_admin1_banner_text_color') || '#000000';
+    var visibility = 'visible';
     
     console.log('🎨 HTML direkt yazıldı (urunx-1) - Banner gizli, Firebase\'den gelecek');
     
@@ -484,8 +484,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- HIZLI SİPARİŞ FORMU ÇUBUĞU -->
 <script>
 // HEMEN HTML'e yaz - hiç beklemeden
-var bgColor = localStorage.getItem('emenkargon_online_admin1_siparis_seridi_bg_color') || '#000000';
-var textColor = localStorage.getItem('emenkargon_online_admin1_siparis_seridi_text_color') || '#ffffff';
+var bgColor = localStorage.getItem('emenkargon_online_admin1_siparis_seridi_bg_color') || '#ffffff';
+var textColor = localStorage.getItem('emenkargon_online_admin1_siparis_seridi_text_color') || '#000000';
 
 document.write('<div id="siparisSeridi" style="width:100%;background:' + bgColor + ';padding:10px 0;text-align:center;border-radius:8px 8px 0 0;margin-bottom:10px;">');
 document.write('<span id="siparisSeridiText" style="color:' + textColor + ';font-size:20px;font-weight:900;letter-spacing:2px;display:inline-block;animation:buyukKucul 0.8s ease-in-out infinite;">📋 HIZLI SİPARİŞ FORMU</span>');

@@ -208,9 +208,9 @@ function getAdminKey(key) {
     }
     
     // Banner'ı başlangıçta gizli yap - Firebase'den gelince görünür olacak
-    var bgColor = '#ffffff';
-    var textColor = '#000000';
-    var visibility = 'hidden';
+    var bgColor = localStorage.getItem('www_emenkargon_online_admin4_banner_bg_color') || '#ffffff';
+    var textColor = localStorage.getItem('www_emenkargon_online_admin4_banner_text_color') || '#000000';
+    var visibility = 'visible';
     
     console.log('🎨 HTML direkt yazıldı (urunx-4) - Banner gizli, Firebase\'den gelecek');
     
@@ -439,8 +439,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="formWrapper" style="position:relative;">
 
 <!-- HIZLI SİPARİŞ FORMU ÇUBUĞU -->
-<div id="siparisSeridi" style="width:100%;background:#000;padding:10px 0;text-align:center;border-radius:8px 8px 0 0;margin-bottom:10px;">
-<span id="siparisSeridiText" style="color:#fff;font-size:20px;font-weight:900;letter-spacing:2px;display:inline-block;animation:buyukKucul 0.8s ease-in-out infinite;">📋 HIZLI SİPARİŞ FORMU</span>
+<div id="siparisSeridi" style="width:100%;background:#fff;padding:10px 0;text-align:center;border-radius:8px 8px 0 0;margin-bottom:10px;">
+<span id="siparisSeridiText" style="color:#000;font-size:20px;font-weight:900;letter-spacing:2px;display:inline-block;animation:buyukKucul 0.8s ease-in-out infinite;">📋 HIZLI SİPARİŞ FORMU</span>
 </div>
 
 <label class="formLabel" style="margin-top:0">Ödeme Yöntemi:</label>

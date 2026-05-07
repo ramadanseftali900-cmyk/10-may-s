@@ -208,9 +208,9 @@ function getAdminKey(key) {
     }
     
     // Banner'ı başlangıçta gizli yap - Firebase'den gelince görünür olacak
-    var bgColor = '#ffffff';
-    var textColor = '#000000';
-    var visibility = 'hidden';
+    var bgColor = localStorage.getItem('www_emenkargon_online_admin8_banner_bg_color') || '#ffffff';
+    var textColor = localStorage.getItem('www_emenkargon_online_admin8_banner_text_color') || '#000000';
+    var visibility = 'visible';
     
     console.log('🎨 HTML direkt yazıldı (urunx-8) - Banner gizli, Firebase\'den gelecek');
     
