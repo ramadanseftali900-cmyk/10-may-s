@@ -2333,36 +2333,6 @@ function localStorageDanYukle() {
             if (secimDiv) secimDiv.style.display = 'none';
         }
     }
-function localStorageDanYukle() {
-    // 8 adet için isim, fiyat ve göster/gizle yükle
-    for(var i = 1; i <= 8; i++) {
-        var savedIsim = localStorage.getItem(pageId + '_isim' + i);
-        if (savedIsim) {
-            var isimInput = document.getElementById('isim' + i + 'Input');
-            var isimDisplay = document.getElementById('isim' + i + 'Display');
-            var isimCheck = document.getElementById('isim' + i + 'Check');
-            if (isimInput) isimInput.value = savedIsim;
-            if (isimDisplay) isimDisplay.textContent = savedIsim;
-            if (isimCheck) isimCheck.style.display = 'block';
-        }
-        var savedFiyat = localStorage.getItem(pageId + '_fiyat' + i);
-        if (savedFiyat) {
-            var fiyatInput = document.getElementById('fiyat' + i + 'Input');
-            var fiyatDisplay = document.getElementById('fiyat' + i + 'Display');
-            if (fiyatInput) fiyatInput.value = savedFiyat;
-            if (fiyatDisplay) fiyatDisplay.textContent = savedFiyat + 'TL';
-        }
-        var savedGoster = localStorage.getItem(pageId + '_adet' + i + '_goster');
-        var checkbox = document.getElementById('adet' + i + 'Goster');
-        var secimDiv = document.getElementById('adetSecim' + i);
-        if(savedGoster === 'true') {
-            if (checkbox) checkbox.checked = true;
-            if (secimDiv) secimDiv.style.display = 'flex';
-        } else if(savedGoster === 'false') {
-            if (checkbox) checkbox.checked = false;
-            if (secimDiv) secimDiv.style.display = 'none';
-        }
-    }
     
     // Kayan yazı ayarlarını yükle
     loadBannerSettings();
