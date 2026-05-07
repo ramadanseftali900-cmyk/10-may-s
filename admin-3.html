@@ -113,6 +113,7 @@ function updateBannerFromColor(type) {
         document.getElementById('bannerTextColorText').value = colorValue;
     }
     
+    // Admin sayfasındaki banner'ı güncelle
     var bannerStrip = document.getElementById('bannerStrip');
     if (bannerStrip && type === 'bg') {
         bannerStrip.style.background = document.getElementById('bannerBgColor').value;
@@ -125,11 +126,13 @@ function updateBannerFromColor(type) {
         });
     }
     
+    // localStorage'a kaydet
     var bgColor = document.getElementById('bannerBgColor').value;
     var textColor = document.getElementById('bannerTextColor').value;
     localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
     localStorage.setItem(getAdminKey('banner_text_color'), textColor);
     
+    // 🔥 Firebase'e ANINDA kaydet
     if (typeof firebase !== 'undefined' && firebase.database) {
         var db = firebase.database();
         var bannerData = {
@@ -3278,78 +3281,61 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Banner ayarlarını yükle
 function loadBannerSettings() {
-    // Renk ayarları
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
+    console.log('🚀 loadBannerSettings çağrıldı (admin-3)');
     
-    // Eğer localStorage'da değer yoksa varsayılan değerleri kaydet
-    if (!localStorage.getItem(getAdminKey('banner_bg_color'))) {
-        localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
-        console.log('💾 Admin-3: Varsayılan arkaplan rengi kaydedildi:', bgColor);
-    }
-    if (!localStorage.getItem(getAdminKey('banner_text_color'))) {
-        localStorage.setItem(getAdminKey('banner_text_color'), textColor);
-        console.log('💾 Admin-3: Varsayılan yazı rengi kaydedildi:', textColor);
-    }
-    
-    document.getElementById('bannerBgColor').value = bgColor;
-    document.getElementById('bannerBgColorText').value = bgColor;
-    document.getElementById('bannerTextColor').value = textColor;
-    document.getElementById('bannerTextColorText').value = textColor;
-    
-    // Yazı ayarları
-    for (var i = 1; i <= 5; i++) {
-        var text = localStorage.getItem(getAdminKey('banner_text_' + i)) || '';
-        var input = document.getElementById('bannerText' + i);
-        if (input) input.value = text;
-    }
-    
-    console.log('✅ Admin-3: Banner ayarları yüklendi:', {bgColor, textColor});
+    // 🔥 Önce Firebase'den yükle
+    onFirebaseReady(function(db) {
+        console.log('🔥 Firebase hazır, banner renkleri yükleniyor (admin-3)...');
+        
+        db.ref('www_emenkargon_online/admin3/bannerColors').once('value', function(snapshot) {
+            var data = snapshot.val();
+            var bgColor = '#000000';
+            var textColor = '#ffffff';
+            
+            if (data) {
+                bgColor = data.bgColor || '#000000';
+                textColor = data.textColor || '#ffffff';
+                console.log('🔥 Firebase\'den yüklendi (admin-3) - BG:', bgColor, 'Text:', textColor);
+            } else {
+                console.log('⚠️ Firebase\'de banner rengi yok (admin-3), varsayılanlar kullanılıyor');
+                // İlk kez kullanılıyorsa Firebase'e varsayılan renkleri kaydet
+                var defaultData = {
+                    bgColor: bgColor,
+                    textColor: textColor,
+                    timestamp: Date.now()
+                };
+                db.ref('www_emenkargon_online/admin3/bannerColors').set(defaultData);
+                console.log('💾 Varsayılan renkler Firebase\'e kaydedildi (admin-3)');
+            }
+            
+            // localStorage'a kaydet
+            localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
+            localStorage.setItem(getAdminKey('banner_text_color'), textColor);
+            
+            // Input'ları güncelle
+            document.getElementById('bannerBgColor').value = bgColor;
+            document.getElementById('bannerBgColorText').value = bgColor;
+            document.getElementById('bannerTextColor').value = textColor;
+            document.getElementById('bannerTextColorText').value = textColor;
+            
+            // Admin sayfasındaki banner'ı güncelle
+            var bannerStrip = document.getElementById('bannerStrip');
+            if (bannerStrip) {
+                bannerStrip.style.background = bgColor;
+            }
+            var spans = document.querySelectorAll('#bannerContent span');
+            spans.forEach(function(span) {
+                span.style.color = textColor;
+            });
+            
+            console.log('✅ Admin-3: Banner ayarları yüklendi ve uygulandı');
+        });
+    });
 }
 
-// Renk seçiciden güncelle
-function updateBannerFromColor(type) {
-    if (type === 'bg') {
-        var color = document.getElementById('bannerBgColor').value;
-        document.getElementById('bannerBgColorText').value = color;
-        localStorage.setItem(getAdminKey('banner_bg_color'), color);
-        console.log('🎨 Admin-3: Arkaplan rengi güncellendi:', color);
-    } else if (type === 'text') {
-        var color = document.getElementById('bannerTextColor').value;
-        document.getElementById('bannerTextColorText').value = color;
-        localStorage.setItem(getAdminKey('banner_text_color'), color);
-        console.log('🎨 Admin-3: Yazı rengi güncellendi:', color);
-    }
-    
-    // Admin sayfasındaki banner'ı anında güncelle
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
-    updateAdminBannerDisplay(bgColor, textColor, []);
-}
-
-// Metin kutusundan güncelle
-function updateBannerFromText(type) {
-    if (type === 'bg') {
-        var color = document.getElementById('bannerBgColorText').value;
-        if (color.match(/^#[0-9A-F]{6}$/i)) {
-            document.getElementById('bannerBgColor').value = color;
-            localStorage.setItem(getAdminKey('banner_bg_color'), color);
-            console.log('🎨 Admin-3: Arkaplan rengi (text) güncellendi:', color);
-        }
-    } else if (type === 'text') {
-        var color = document.getElementById('bannerTextColorText').value;
-        if (color.match(/^#[0-9A-F]{6}$/i)) {
-            document.getElementById('bannerTextColor').value = color;
-            localStorage.setItem(getAdminKey('banner_text_color'), color);
-            console.log('🎨 Admin-3: Yazı rengi (text) güncellendi:', color);
-        }
-    }
-    
-    // Admin sayfasındaki banner'ı anında güncelle
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
-    updateAdminBannerDisplay(bgColor, textColor, []);
-}
+// NOT: updateBannerFromColor ve updateBannerFromText fonksiyonları 
+// sayfa başında (satır 107-170) global scope'da tanımlı
+// Burada tekrar tanımlamaya gerek yok
 
 function updateBannerSettings() {
     // Input'lardan renkleri al
