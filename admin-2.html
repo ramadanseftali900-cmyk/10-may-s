@@ -109,6 +109,7 @@ function updateBannerFromColor(type) {
         document.getElementById('bannerTextColorText').value = colorValue;
     }
     
+    // Admin sayfasındaki banner'ı güncelle
     var bannerStrip = document.getElementById('bannerStrip');
     if (bannerStrip && type === 'bg') {
         bannerStrip.style.background = document.getElementById('bannerBgColor').value;
@@ -121,13 +122,14 @@ function updateBannerFromColor(type) {
         });
     }
     
+    // localStorage'a kaydet
     var bgColor = document.getElementById('bannerBgColor').value;
     var textColor = document.getElementById('bannerTextColor').value;
     localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
     localStorage.setItem(getAdminKey('banner_text_color'), textColor);
     
-    if (typeof firebase !== 'undefined' && firebase.database) {
-        var db = firebase.database();
+    // 🔥 Firebase'e ANINDA kaydet (onFirebaseReady kullan)
+    onFirebaseReady(function(db) {
         var bannerData = {
             bgColor: bgColor,
             textColor: textColor,
@@ -138,7 +140,7 @@ function updateBannerFromColor(type) {
         }).catch(function(error) {
             console.error('❌ Firebase kayıt hatası:', error);
         });
-    }
+    });
 }
 
 function updateBannerFromText(type) {

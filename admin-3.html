@@ -132,9 +132,8 @@ function updateBannerFromColor(type) {
     localStorage.setItem(getAdminKey('banner_bg_color'), bgColor);
     localStorage.setItem(getAdminKey('banner_text_color'), textColor);
     
-    // 🔥 Firebase'e ANINDA kaydet
-    if (typeof firebase !== 'undefined' && firebase.database) {
-        var db = firebase.database();
+    // 🔥 Firebase'e ANINDA kaydet (onFirebaseReady kullan)
+    onFirebaseReady(function(db) {
         var bannerData = {
             bgColor: bgColor,
             textColor: textColor,
