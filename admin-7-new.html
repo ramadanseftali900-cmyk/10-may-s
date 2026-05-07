@@ -94,7 +94,7 @@ input::placeholder{color:#000000 !important;opacity:1}
 
 <script>
 function getAdminKey(key) { 
-    // SABİT KEY KULLAN - ADMİN-7'NİN BAĞIMSIZ VERİLERİ
+    // SABİT KEY KULLAN - Admin-7'İN BAĞIMSIZ VERİLERİ
     var siteId = 'www_emenkargon_online';
     localStorage.setItem('__SITE_ID__', siteId);
     return siteId + '_admin7_' + key; 
@@ -191,7 +191,7 @@ function updateBannerFromText(type) {
 <button onclick="window.location.href='admin-7.html'" style="background:#000 !important;color:#fff !important;border:none;padding:20px 10px;border-radius:12px;font-weight:bold;cursor:pointer;font-size:16px;height:65px;display:flex;align-items:center;justify-content:center;gap:5px;">ADMİN 7 <span style="font-size:20px;cursor:pointer" onclick="event.stopPropagation();window.location.href='urunx-7.html'">👁️</span></button>
 <button onclick="window.location.href='admin-8.html'" style="background:#000 !important;color:#fff !important;border:none;padding:20px 10px;border-radius:12px;font-weight:bold;cursor:pointer;font-size:16px;height:65px;display:flex;align-items:center;justify-content:center;gap:5px;">ADMİN 8 <span style="font-size:20px;cursor:pointer" onclick="event.stopPropagation();window.location.href='urunx-8.html'">👁️</span></button>
 <button onclick="window.location.href='admin-9.html'" style="background:#000 !important;color:#fff !important;border:none;padding:20px 10px;border-radius:12px;font-weight:bold;cursor:pointer;font-size:16px;height:65px;display:flex;align-items:center;justify-content:center;gap:5px;">ADMİN 9 <span style="font-size:20px;cursor:pointer" onclick="event.stopPropagation();window.location.href='urunx-9.html'">👁️</span></button>
-<button onclick="window.location.href='admin-10.html'" style="background:#000 !important;color:#fff !important;border:none;padding:20px 10px;border-radius:12px;font-weight:bold;cursor:pointer;font-size:16px;height:65px;display:flex;align-items:center;justify-content:center;gap:5px;">ADMİN 10 <span style="font-size:20px;cursor:pointer" onclick="event.stopPropagation();window.location.href='urunx-10.html'">👁️</span></button>
+<button onclick="window.location.href='Admin-7.html'" style="background:#000 !important;color:#fff !important;border:none;padding:20px 10px;border-radius:12px;font-weight:bold;cursor:pointer;font-size:16px;height:65px;display:flex;align-items:center;justify-content:center;gap:5px;">ADMİN 7 <span style="font-size:20px;cursor:pointer" onclick="event.stopPropagation();window.location.href='urunx-10.html'">👁️</span></button>
 </div>
 </div>
 
@@ -904,7 +904,7 @@ document.write('<div id="siparisSeridi" style="width:100%;background:' + bgColor
 document.write('<span id="siparisSeridiText" style="color:' + textColor + ';font-size:20px;font-weight:900;letter-spacing:2px;display:inline-block;animation:buyukKucul 0.8s ease-in-out infinite;">📋 HIZLI SİPARİŞ FORMU</span>');
 document.write('</div>');
 
-console.log('🎨 HTML direkt yazıldı (admin-7) - BG:', bgColor, 'Text:', textColor);
+console.log('🎨 HTML direkt yazıldı (Admin-7) - BG:', bgColor, 'Text:', textColor);
 </script>
 <label class="formLabel" style="margin-top:0">Ödeme Yöntemi:</label>
 <div class="radioBox" style="border:2px solid #000 !important;box-shadow:inset 0 0 0 1px #000 !important;">
@@ -3200,7 +3200,7 @@ function updateSiparisSeridiSettings() {
                 timestamp: Date.now()
             };
             
-            // Renkleri Firebase'e kaydet - ADMIN-7'YE ÖZEL
+            // Renkleri Firebase'e kaydet - ADMIN-10'A ÖZEL
             db.ref('www_emenkargon_online/admin7/siparisSeridiColors').set(colorData).then(function() {
                 console.log('🔥 Firebase\'e kaydedildi (admin7/siparisSeridiColors):', colorData);
             }).catch(function(error) {
@@ -3232,7 +3232,7 @@ function updateSiparisSeridiDisplay(bgColor, textColor) {
 }
 
 function loadSiparisSeridiSettings() {
-    // 🔥 Firebase'den renkleri yükle - ADMIN-7'YE ÖZEL YOL
+    // 🔥 Firebase'den renkleri yükle - ADMIN-10'A ÖZEL YOL
     onFirebaseReady(function(db) {
         db.ref('www_emenkargon_online/admin7/siparisSeridiColors').once('value').then(function(snapshot) {
             var data = snapshot.val();
