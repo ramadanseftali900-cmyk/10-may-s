@@ -219,8 +219,8 @@ function updateBannerFromText(type) {
     document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;">');
     document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 60s linear infinite;">');
     
-    // Yazıları 2 kez tekrarla (kayan efekt için)
-    for (var j = 0; j < 2; j++) {
+    // Yazıları 4 kez tekrarla (kayan efekt için)
+    for (var j = 0; j < 4; j++) {
         for (var i = 0; i < texts.length; i++) {
             document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">' + texts[i] + '</span>');
         }
@@ -234,7 +234,7 @@ function updateBannerFromText(type) {
 <style>
 @keyframes kayanYazi {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-66.66%); }
+  100% { transform: translateX(-75%); }
 }
 </style>
 
