@@ -433,8 +433,15 @@ function updateBannerDisplay(bgColor, textColor) {
 
 // Sayfa yüklenince banner ayarlarını yükle
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎯 DOMContentLoaded - loadBannerSettings çağrılıyor (urunx-3)');
     loadBannerSettings();
 });
+
+// Yedek: 1 saniye sonra tekrar dene
+setTimeout(function() {
+    console.log('🎯 Timeout - loadBannerSettings tekrar çağrılıyor (urunx-3)');
+    loadBannerSettings();
+}, 1000);
 </script>
 <div class="formWrapper" style="position:relative;">
 
