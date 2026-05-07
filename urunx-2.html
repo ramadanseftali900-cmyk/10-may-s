@@ -208,17 +208,11 @@ function getAdminKey(key) {
     }
     
     // localStorage'dan renkleri al
-    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color'));
-    var textColor = localStorage.getItem(getAdminKey('banner_text_color'));
+    var bgColor = localStorage.getItem(getAdminKey('banner_bg_color')) || '#000000';
+    var textColor = localStorage.getItem(getAdminKey('banner_text_color')) || '#ffffff';
     
-    // Eğer localStorage'da renk varsa VE default değil ise kullan, yoksa gizle
-    var hasValidColors = bgColor && textColor && bgColor !== '#000000' && bgColor !== '#ffffff';
-    var visibility = hasValidColors ? 'visible' : 'hidden';
-    if (!bgColor) bgColor = '#000000';
-    if (!textColor) textColor = '#ffffff';
-    
-    // SABİT METİNLER - HIZLI YÜKLEME
-    document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;visibility:' + visibility + ';">');
+    // Banner'ı her zaman göster (default renklerle)
+    document.write('<div id="bannerStrip" style="width:100%;background:' + bgColor + ';overflow:hidden;white-space:nowrap;padding:6px 0;">');
     document.write('<div id="bannerContent" style="display:inline-block;animation:kayanYazi 20s linear infinite;">');
     document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">🚚 AYNI GÜN KARGO</span>');
     document.write('<span style="color:' + textColor + ';font-size:12px;font-weight:bold;margin-right:50px;">💳 KAPIDA ÖDEME</span>');
@@ -241,24 +235,29 @@ function getAdminKey(key) {
         
         db.ref('www_emenkargon_online/admin2/bannerColors').on('value', function(snapshot) {
             var data = snapshot.val();
-            if (data) {
+            console.log('🔥 Firebase data (urunx-2):', data);
+            
+            if (data && data.bgColor && data.textColor) {
                 var strip = document.getElementById('bannerStrip');
                 var content = document.getElementById('bannerContent');
+                
                 if (strip) {
-                    strip.style.background = data.bgColor || '#000000';
-                    strip.style.visibility = 'visible'; // 🔥 Şeridi görünür yap
-                    console.log('🔥 Firebase\'den yüklendi (urunx-2) - BG:', data.bgColor);
+                    strip.style.background = data.bgColor;
+                    console.log('✅ Banner arkaplan güncellendi:', data.bgColor);
                 }
                 if (content) {
                     var spans = content.querySelectorAll('span');
-                    spans.forEach(function(span) { span.style.color = data.textColor || '#ffffff'; });
+                    spans.forEach(function(span) { 
+                        span.style.color = data.textColor;
+                    });
+                    console.log('✅ Banner yazı rengi güncellendi:', data.textColor);
                 }
                 
                 // localStorage'a kaydet
                 localStorage.setItem(getAdminKey('banner_bg_color'), data.bgColor);
                 localStorage.setItem(getAdminKey('banner_text_color'), data.textColor);
             } else {
-                console.log('⚠️ Firebase\'de banner rengi yok (urunx-2) - Banner gizli kalacak');
+                console.log('⚠️ Firebase\'de banner rengi yok (urunx-2)');
             }
         });
     });
